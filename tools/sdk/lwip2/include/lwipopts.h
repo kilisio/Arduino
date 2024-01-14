@@ -59,6 +59,74 @@
 //#include "lwip/debug.h"      // done at end of this file
 #include "gluedebug.h"
 
+// custom config
+#undef LWIP_FEATURES
+#define LWIP_FEATURES                   1
+
+#undef MEM_SIZE
+#define MEM_SIZE                        (32*1024)
+
+#undef TCP_MSS
+#define TCP_MSS                         1460
+
+#undef TCP_SND_BUF
+#define TCP_SND_BUF                     16 * TCP_MSS
+
+// must be less than 256
+#undef TCP_SND_QUEUELEN
+#define TCP_SND_QUEUELEN                ((4 * (TCP_SND_BUF) + (TCP_MSS - 1))/(TCP_MSS))
+
+// TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full
+#undef TCP_WND
+#define TCP_WND                         32 * TCP_MSS
+
+// MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
+#undef MEMP_SANITY_CHECK
+#define MEMP_SANITY_CHECK               0
+
+#undef MEMP_OVERFLOW_CHECK
+#define MEMP_OVERFLOW_CHECK             0
+
+#undef MEMP_NUM_PBUF
+#define MEMP_NUM_PBUF                   10
+
+#undef MEMP_NUM_TCP_PCB
+#define MEMP_NUM_TCP_PCB                16 
+
+#undef MEMP_NUM_TCP_PCB_LISTEN
+#define MEMP_NUM_TCP_PCB_LISTEN         8 
+
+#undef MEMP_NUM_TCP_PCB_TIME_WAIT
+#define MEMP_NUM_TCP_PCB_TIME_WAIT      5
+
+// MEMP_NUM_TCP_SEG should be twice the size of TCP_SND_QUEUELEN
+#undef MEMP_NUM_TCP_SEG
+#define MEMP_NUM_TCP_SEG                (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
+
+// PBUF_POOL_SIZE is the number of PBUF_POOL_BUFSIZE packet buffers in a single pool. total pool zize equals (8*512) bytes
+#undef PBUF_POOL_SIZE
+#define PBUF_POOL_SIZE                  8
+
+// **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
+#undef PBUF_POOL_BUFSIZE
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(2048) // LWIP_MEM_ALIGN_SIZE(TCP_MSS+40+PBUF_LINK_HLEN) 
+
+#undef IP_FORWARD
+#define IP_FORWARD                      1
+
+#undef LWIP_DHCP
+#define LWIP_DHCP                       1
+
+// TCP_QUEUE_OOSEQ=0 turns off queuing of packets that are out of sequence, forcing the host to re-send (which it will anyway), but avoiding the duplicate acknowledgements.
+#undef TCP_QUEUE_OOSEQ
+#define TCP_QUEUE_OOSEQ                 0
+
+#undef LWIP_TCP_SACK_OUT
+#define LWIP_TCP_SACK_OUT               0
+
+#undef TCP_TMR_INTERVAL
+#define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
+
 /**
  * @defgroup lwip_opts Options (lwipopts.h)
  * @ingroup lwip
