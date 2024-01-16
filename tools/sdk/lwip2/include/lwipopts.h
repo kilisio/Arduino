@@ -63,22 +63,36 @@
 #undef LWIP_FEATURES
 #define LWIP_FEATURES                   1
 
+// This places more objects into the static block defined by MEM_SIZE.
+// Uses mem_malloc/mem_free instead of the lwip pool allocator.
+// MEM_SIZE now needs to be increased by about 10k.
+// It doesn't magically produce extra memory, and causes crashes.
+// There is also a performance loss, apparently. AVOID.
+#undef MEMP_MEM_MALLOC
+#define MEMP_MEM_MALLOC		            	1
+
+// MEM_SIZE: the size of the heap memory. This is a statically allocated block.
+// // If MEMP_MEM_MALLOC=0, this holds just the PBUF_ stuff.
+// // If MEMP_MEM_MALLOC=1 (which is not reliable) this greatly expands and needs 16k+.
+// // Empirically this needs to be big enough for at least 4 x PBUF_POOL_BUFSIZE.
+// // 6k yields a good speed and going to 8k+ makes a minimal improvement. The main
+// // factor affecting speed is the poll period in ethernetif_input().
 #undef MEM_SIZE
-#define MEM_SIZE                        (32*1024)
+#define MEM_SIZE                        (16*1024)
 
 #undef TCP_MSS
 #define TCP_MSS                         1460
 
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     16 * TCP_MSS
+#define TCP_SND_BUF                     24 * TCP_MSS
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
 #define TCP_SND_QUEUELEN                ((4 * (TCP_SND_BUF) + (TCP_MSS - 1))/(TCP_MSS))
 
-// TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full
+// TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size
 #undef TCP_WND
-#define TCP_WND                         32 * TCP_MSS
+#define TCP_WND                         TCP_SND_BUF
 
 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
 #undef MEMP_SANITY_CHECK
@@ -88,13 +102,13 @@
 #define MEMP_OVERFLOW_CHECK             0
 
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   10
+#define MEMP_NUM_PBUF                   5
 
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                16 
+#define MEMP_NUM_TCP_PCB                100 
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         8 
+#define MEMP_NUM_TCP_PCB_LISTEN         100 
 
 #undef MEMP_NUM_TCP_PCB_TIME_WAIT
 #define MEMP_NUM_TCP_PCB_TIME_WAIT      5
@@ -105,11 +119,11 @@
 
 // PBUF_POOL_SIZE is the number of PBUF_POOL_BUFSIZE packet buffers in a single pool. total pool zize equals (8*512) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  8
+#define PBUF_POOL_SIZE                  12
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(2048) // LWIP_MEM_ALIGN_SIZE(TCP_MSS+40+PBUF_LINK_HLEN) 
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(3072) // LWIP_MEM_ALIGN_SIZE(TCP_MSS+40+PBUF_LINK_HLEN) 
 
 #undef IP_FORWARD
 #define IP_FORWARD                      1
@@ -125,7 +139,7 @@
 #define LWIP_TCP_SACK_OUT               0
 
 #undef TCP_TMR_INTERVAL
-#define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
+#define TCP_TMR_INTERVAL                25  /* The TCP timer interval in milliseconds. */
 
 /**
  * @defgroup lwip_opts Options (lwipopts.h)
