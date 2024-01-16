@@ -101,18 +101,31 @@
 #undef MEMP_OVERFLOW_CHECK
 #define MEMP_OVERFLOW_CHECK             0
 
+/* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
+   sends a lot of data out of ROM (or other static memory), this
+   should be set high. */
+// each 1 is 20 bytes of static RAM
 #undef MEMP_NUM_PBUF
 #define MEMP_NUM_PBUF                   5
 
+/* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
+   connections. */
+// each 1 is 145 bytes of static RAM
 #undef MEMP_NUM_TCP_PCB
 #define MEMP_NUM_TCP_PCB                100 
 
+/* MEMP_NUM_TCP_PCB_LISTEN: the number of listening TCP
+   connections. */
+// each 1 is 28 bytes of static RAM
 #undef MEMP_NUM_TCP_PCB_LISTEN
 #define MEMP_NUM_TCP_PCB_LISTEN         100 
 
 #undef MEMP_NUM_TCP_PCB_TIME_WAIT
 #define MEMP_NUM_TCP_PCB_TIME_WAIT      5
 
+/* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
+   segments. */
+// each 1 is 20 bytes of static RAM
 // MEMP_NUM_TCP_SEG should be twice the size of TCP_SND_QUEUELEN
 #undef MEMP_NUM_TCP_SEG
 #define MEMP_NUM_TCP_SEG                (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
