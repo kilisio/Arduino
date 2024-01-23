@@ -1535,7 +1535,9 @@ tcp_txnow(void)
 
   for (pcb = tcp_active_pcbs; pcb != NULL; pcb = pcb->next) {
     if (pcb->flags & TF_NAGLEMEMERR) {
-      tcp_output(pcb);
+      // clear nagle flag and abort pcb's that caused a memory error.
+      tcp_clear_flags(pcb, TF_NAGLEMEMERR);
+      tcp_abort(pcb);
     }
   }
 }

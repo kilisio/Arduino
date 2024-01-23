@@ -1340,8 +1340,17 @@ tcp_output(struct tcp_pcb *pcb)
      *   either seg->next != NULL or pcb->unacked == NULL;
      *   RST is no sent using tcp_write/tcp_output.
      */
-    if ((tcp_do_output_nagle(pcb) == 0) &&
-        ((pcb->flags & (TF_NAGLEMEMERR | TF_FIN)) == 0)) {
+    /* if ((tcp_do_output_nagle(pcb) == 0) && */
+    /*     ((pcb->flags & (TF_NAGLEMEMERR | TF_FIN)) == 0)) { */
+    /*   break; */
+    /* } */
+    if (pcb->flags & TF_FIN) {
+      break;
+    }
+    if (pcb->flags & TF_NAGLEMEMERR) {
+      // clear nagle flag and abort pcb's that caused a memory error.
+      tcp_clear_flags(pcb, TF_NAGLEMEMERR);
+      tcp_abort(pcb);
       break;
     }
 #if TCP_CWND_DEBUG
