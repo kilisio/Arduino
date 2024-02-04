@@ -80,7 +80,7 @@
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     40 * TCP_MSS
+#define TCP_SND_BUF                     44 * TCP_MSS
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
@@ -102,7 +102,7 @@
    should be set high. */
 // each 1 is 20 bytes of static RAM
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   5
+#define MEMP_NUM_PBUF                   1024
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
@@ -111,14 +111,14 @@
 // statistically Light users concurrent active tcp connections are 30-50 connections on average with peaks of up to 120-250
 // while for Heavy users concurrent active tcp connections are 60-100 connections on average with peaks of up to 250-500
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                100 
+#define MEMP_NUM_TCP_PCB                500 
 
 /* MEMP_NUM_TCP_PCB_LISTEN: the number of listening TCP
    connections. */
 // each 1 is 28 bytes of static RAM
 // should normally be less than MEMP_NUM_TCP_PCB
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         50 
+#define MEMP_NUM_TCP_PCB_LISTEN         250 
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. */
@@ -129,7 +129,7 @@
 
 // PBUF_POOL_SIZE is the number of PBUF_POOL_BUFSIZE packet buffers in a single pool. total pool zize equals (8*512) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  30
+#define PBUF_POOL_SIZE                  32
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
