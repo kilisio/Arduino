@@ -997,7 +997,7 @@
  * LWIP_RAW==1: Enable application layer to hook into the IP layer itself.
  */
 #if !defined LWIP_RAW || defined __DOXYGEN__
-#define LWIP_RAW                        1 // 0
+#define LWIP_RAW                        0 // 0
 #endif
 
 /**
