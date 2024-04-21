@@ -149,7 +149,7 @@
 #define LWIP_TCP_SACK_OUT               0
 
 #undef TCP_TMR_INTERVAL
-#define TCP_TMR_INTERVAL                25  /* The TCP timer interval in milliseconds. */
+#define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
 
 /**
  * @defgroup lwip_opts Options (lwipopts.h)

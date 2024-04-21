@@ -13,3 +13,12 @@ glue and lwIP debug options are in builder/glue/gluedebug.h
 MSS values are in builder/Makefile.arduino
 
 MSS values in boards.txt are only informative
+
+```sh
+    rm -rf ./builder/
+    make
+    make clean
+    ./patch.sh
+    make install
+```
+
