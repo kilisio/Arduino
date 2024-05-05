@@ -80,15 +80,15 @@
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     11 * TCP_MSS
+#define TCP_SND_BUF                     (22 * 1024) //44 * TCP_MSS
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                ((4 * (TCP_SND_BUF) + (TCP_MSS - 1))/(TCP_MSS))
+#define TCP_SND_QUEUELEN                255 //((4 * (TCP_SND_BUF) + (TCP_MSS - 1))/(TCP_MSS))
 
 // TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size
 #undef TCP_WND
-#define TCP_WND                         TCP_SND_BUF
+#define TCP_WND                         65535 //TCP_SND_BUF
 
 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
 #undef MEMP_SANITY_CHECK
@@ -125,11 +125,11 @@
 // each 1 is 20 bytes of static RAM
 // MEMP_NUM_TCP_SEG should be twice the size of TCP_SND_QUEUELEN
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
+#define MEMP_NUM_TCP_SEG                2 * TCP_SND_QUEUELEN //(4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
 
 // PBUF_POOL_SIZE is the number of PBUF_POOL_BUFSIZE packet buffers in a single pool. total pool zize equals (8*512) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  6
+#define PBUF_POOL_SIZE                  22
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
