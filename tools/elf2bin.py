@@ -48,7 +48,7 @@ def get_segment_size_addr(elf, segment, path):
     lines = p.stdout.readlines()
     for line in lines:
         if segment in line:
-            words = re.split('\s+', line)
+            words = re.split(r'\s+', line)
             size = int(words[3], 16)
             addr = int(words[4], 16)
             return [ size, addr ]
