@@ -116,14 +116,14 @@
 // statistically Light users concurrent active tcp connections are 30-50 connections on average with peaks of up to 120-250
 // while for Heavy users concurrent active tcp connections are 60-100 connections on average with peaks of up to 250-500
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                100 
+#define MEMP_NUM_TCP_PCB                500 
 
 /* MEMP_NUM_TCP_PCB_LISTEN: the number of listening TCP
    connections. */
 // each 1 is 28 bytes of static RAM
 // should normally be less than MEMP_NUM_TCP_PCB
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         50 
+#define MEMP_NUM_TCP_PCB_LISTEN         250 
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. */
