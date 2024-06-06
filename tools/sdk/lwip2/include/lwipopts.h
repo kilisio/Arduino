@@ -78,7 +78,7 @@
 // // 6k yields a good speed and going to 8k+ makes a minimal improvement. The main
 // // factor affecting speed is the poll period in ethernetif_input().
 #undef MEM_SIZE
-#define MEM_SIZE                        (32*1024)
+#define MEM_SIZE                        (64*1024)
 
 #undef TCP_MSS
 #define TCP_MSS                         1460
@@ -107,7 +107,7 @@
    should be set high (>1024). */
 // each 1 is 20 bytes of static RAM
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   128
+#define MEMP_NUM_PBUF                   1024
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
@@ -128,9 +128,9 @@
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. */
 // each 1 is 20 bytes of static RAM
-// MEMP_NUM_TCP_SEG should be twice the size of TCP_SND_QUEUELEN
+// MEMP_NUM_TCP_SEG should be atleast twice the size of TCP_SND_QUEUELEN
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                2 * TCP_SND_QUEUELEN //(4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
+#define MEMP_NUM_TCP_SEG                4 * TCP_SND_QUEUELEN //(4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
 
 // PBUF_POOL_SIZE is the number of PBUF_POOL_BUFSIZE packet buffers in a single pool. total pool zize equals (8*512) bytes
 #undef PBUF_POOL_SIZE
