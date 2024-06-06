@@ -85,7 +85,7 @@
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (22 * 1024) //44 * TCP_MSS
+#define TCP_SND_BUF                     65535 //44 * TCP_MSS
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
@@ -93,7 +93,7 @@
 
 // TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size
 #undef TCP_WND
-#define TCP_WND                         65535 //TCP_SND_BUF
+#define TCP_WND                         TCP_SND_BUF
 
 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
 #undef MEMP_SANITY_CHECK
