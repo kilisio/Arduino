@@ -78,7 +78,7 @@
 // // 6k yields a good speed and going to 8k+ makes a minimal improvement. The main
 // // factor affecting speed is the poll period in ethernetif_input().
 #undef MEM_SIZE
-#define MEM_SIZE                        (64*1024)
+#define MEM_SIZE                        (32*1024)
 
 #undef TCP_MSS
 #define TCP_MSS                         1460
