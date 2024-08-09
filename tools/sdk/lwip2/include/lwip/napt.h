@@ -53,7 +53,7 @@ extern "C" {
 #define IP_PORTMAP_MAX 32
 
 /* Timeouts in sec for the various protocol types */
-#define IP_NAPT_TIMEOUT_MS_TCP (3*60*1000)
+#define IP_NAPT_TIMEOUT_MS_TCP (5*60*1000)
 #define IP_NAPT_TIMEOUT_MS_TCP_DISCON (20*1000)
 #define IP_NAPT_TIMEOUT_MS_UDP (2*1000)
 #define IP_NAPT_TIMEOUT_MS_ICMP (2*1000)

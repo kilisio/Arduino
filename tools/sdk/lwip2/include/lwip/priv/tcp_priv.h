@@ -88,23 +88,6 @@ void             tcp_rexmit_fast (struct tcp_pcb *pcb);
 u32_t            tcp_update_rcv_ann_wnd(struct tcp_pcb *pcb);
 err_t            tcp_process_refused_data(struct tcp_pcb *pcb);
 
-/**
- * This is the Nagle algorithm: try to combine user data to send as few TCP
- * segments as possible. Only send if
- * - no previously transmitted data on the connection remains unacknowledged or
- * - the TF_NODELAY flag is set (nagle algorithm turned off for this pcb) or
- * - the only unsent segment is at least pcb->mss bytes long (or there is more
- *   than one unsent segment - with lwIP, this can happen although unsent->len < mss)
- * - or if we are in fast-retransmit (TF_INFR)
- */
-// #define tcp_do_output_nagle(tpcb) ((((tpcb)->unacked == NULL) || \
-//                             ((tpcb)->flags & (TF_NODELAY | TF_INFR)) || \
-//                             (((tpcb)->unsent != NULL) && (((tpcb)->unsent->next != NULL) || \
-//                               ((tpcb)->unsent->len >= (tpcb)->mss))) || \
-//                             ((tcp_sndbuf(tpcb) == 0) || (tcp_sndqueuelen(tpcb) >= TCP_SND_QUEUELEN)) \
-//                             ) ? 1 : 0)
-// #define tcp_output_nagle(tpcb) (tcp_do_output_nagle(tpcb) ? tcp_output(tpcb) : ERR_OK)
-
 #define TCP_SEQ_LT(a,b)     ((s32_t)((u32_t)(a) - (u32_t)(b)) < 0)
 #define TCP_SEQ_LEQ(a,b)    ((s32_t)((u32_t)(a) - (u32_t)(b)) <= 0)
 #define TCP_SEQ_GT(a,b)     ((s32_t)((u32_t)(a) - (u32_t)(b)) > 0)
@@ -116,7 +99,7 @@ err_t            tcp_process_refused_data(struct tcp_pcb *pcb);
 #define TCP_SEQ_BETWEEN(a,b,c) (TCP_SEQ_GEQ(a,b) && TCP_SEQ_LEQ(a,c))
 
 #ifndef TCP_TMR_INTERVAL
-#define TCP_TMR_INTERVAL       100  /* The TCP timer interval in milliseconds. */
+#define TCP_TMR_INTERVAL       25  /* The TCP timer interval in milliseconds. */
 #endif /* TCP_TMR_INTERVAL */
 
 #ifndef TCP_FAST_INTERVAL
@@ -124,7 +107,7 @@ err_t            tcp_process_refused_data(struct tcp_pcb *pcb);
 #endif /* TCP_FAST_INTERVAL */
 
 #ifndef TCP_SLOW_INTERVAL
-#define TCP_SLOW_INTERVAL      (2*TCP_TMR_INTERVAL)  /* the coarse grained timeout in milliseconds */
+#define TCP_SLOW_INTERVAL      (4*TCP_TMR_INTERVAL)  /* the coarse grained timeout in milliseconds */
 #endif /* TCP_SLOW_INTERVAL */
 
 #define TCP_FIN_WAIT_TIMEOUT 20000 /* milliseconds */

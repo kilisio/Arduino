@@ -26,7 +26,7 @@ ifeq ($(target),open)
 endif
 	touch .patched
 
-	cp -rf ../../../patch/builder/. ../../../builder/
+	cp -rf ../../../patch/lwip2-src/. ../../../builder/lwip2-src/
 
 include ../../makefiles/Makefile.defs
 include ../../makefiles/Makefile.rules
