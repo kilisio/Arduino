@@ -660,21 +660,20 @@ dns_lookup(const char *name, ip_addr_t *addr LWIP_DNS_ADDRTYPE_ARG(u8_t dns_addr
 
   for (i = 0; i < DNS_TABLE_SIZE; ++i) {
     if ((dns_table[i].state == DNS_STATE_DONE) &&
-        (lwip_strnicmp(name, dns_table[i].name, sizeof(dns_table[i].name)) == 0)) {
-        LWIP_DEBUGF(DNS_DEBUG, ("dns_lookup: \"%s\": found = ", name));
-        for (j=0; j<dns_table[i].ipaddr_cnt; j++) {
-          if (LWIP_DNS_ADDRTYPE_MATCH_IP(dns_addrtype, dns_table[i].ipaddr[j])) {
-            ip_addr_debug_print_val(DNS_DEBUG, dns_table[i].ipaddr[j]);
-            LWIP_DEBUGF(DNS_DEBUG, ("\n"));
-            if (addr) {
-              ip_addr_copy(addr[out_idx], dns_table[i].ipaddr[j]);
-              out_idx++;
-            }
+      (lwip_strnicmp(name, dns_table[i].name, sizeof(dns_table[i].name)) == 0)) {
+      LWIP_DEBUGF(DNS_DEBUG, ("dns_lookup: \"%s\": found = ", name));
+      for (j=0; j<dns_table[i].ipaddr_cnt; j++) {
+        if (LWIP_DNS_ADDRTYPE_MATCH_IP(dns_addrtype, dns_table[i].ipaddr[j])) {
+          ip_addr_debug_print_val(DNS_DEBUG, dns_table[i].ipaddr[j]);
+          LWIP_DEBUGF(DNS_DEBUG, ("\n"));
+          if (addr) {
+            ip_addr_copy(addr[out_idx], dns_table[i].ipaddr[j]);
+            out_idx++;
           }
         }
-        if (out_idx) {
-          return ERR_OK;
-        }
+      }
+      if (out_idx) {
+        return ERR_OK;
       }
     }
   }
