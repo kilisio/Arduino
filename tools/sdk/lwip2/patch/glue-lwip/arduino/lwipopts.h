@@ -64,19 +64,19 @@
 // It doesn't magically produce extra memory, and causes crashes.
 // There is also a performance loss, apparently. AVOID.
 #undef MEMP_MEM_MALLOC
-#define MEMP_MEM_MALLOC		            	0
+#define MEMP_MEM_MALLOC		            	1
 
 #undef MEM_LIBC_MALLOC                 
-#define MEM_LIBC_MALLOC                 0
+#define MEM_LIBC_MALLOC                 1
 
 #undef MEM_USE_POOLS
-#define MEM_USE_POOLS                   1
+#define MEM_USE_POOLS                   0
 
 #undef MEMP_USE_CUSTOM_POOLS
-#define MEMP_USE_CUSTOM_POOLS           1
+#define MEMP_USE_CUSTOM_POOLS           0
 
 #undef MEM_USE_POOLS_TRY_BIGGER_POOL   
-#define MEM_USE_POOLS_TRY_BIGGER_POOL   1
+#define MEM_USE_POOLS_TRY_BIGGER_POOL   0
 
 // MEM_SIZE: the size of the heap memory. This is a statically allocated block.
 // // If MEMP_MEM_MALLOC=0, this holds just the PBUF_ stuff.
@@ -85,14 +85,14 @@
 // // 6k yields a good speed and going to 8k+ makes a minimal improvement. The main
 // // factor affecting speed is the poll period in ethernetif_input().
 #undef MEM_SIZE
-#define MEM_SIZE                        (12*1024)
+#define MEM_SIZE                        (20*1024)
 
 #undef TCP_MSS
 #define TCP_MSS                         1460
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (6*1024)
+#define TCP_SND_BUF                     (18*1024)
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
@@ -106,7 +106,7 @@
 #define LWIP_WND_SCALE                  1
 
 #undef TCP_RCV_SCALE                   
-#define TCP_RCV_SCALE                   10 // 0..14
+#define TCP_RCV_SCALE                   0 // 0..14
 
 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
 #undef MEMP_SANITY_CHECK
@@ -120,7 +120,7 @@
    should be set high (>1024). */
 // each 1 is 20 bytes of static RAM
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   10
+#define MEMP_NUM_PBUF                   4
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
@@ -129,29 +129,32 @@
 // statistically Light users concurrent active tcp connections are 30-50 connections on average with peaks of up to 120-250
 // while for Heavy users concurrent active tcp connections are 60-100 connections on average with peaks of up to 250-500
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                8 
+#define MEMP_NUM_TCP_PCB                32 
 
 /* MEMP_NUM_TCP_PCB_LISTEN: the number of listening TCP
    connections. */
 // each 1 is 28 bytes of static RAM
 // should normally be less than MEMP_NUM_TCP_PCB
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         4 
+#define MEMP_NUM_TCP_PCB_LISTEN         16 
+
+#undef MEMP_NUM_UDP_PCB                
+#define MEMP_NUM_UDP_PCB                8
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. */
 // each 1 is 20 bytes of static RAM
 // MEMP_NUM_TCP_SEG should be atleast twice the size of TCP_SND_QUEUELEN
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                4 * TCP_SND_QUEUELEN //(4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
+#define MEMP_NUM_TCP_SEG                (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
 
 // PBUF_POOL_SIZE is the number of PBUF_POOL_BUFSIZE packet buffers in a single pool. total pool zize equals (8*512) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  6
+#define PBUF_POOL_SIZE                  10
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(2048) 
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(2048)
 
 #undef IP_FORWARD
 #define IP_FORWARD                      1
@@ -167,7 +170,7 @@
 #define LWIP_TCP_SACK_OUT               0
 
 #undef TCP_TMR_INTERVAL
-#define TCP_TMR_INTERVAL                25  /* The TCP timer interval in milliseconds. */
+#define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
 
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
