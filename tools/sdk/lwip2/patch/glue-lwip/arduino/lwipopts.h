@@ -58,41 +58,22 @@
 #undef LWIP_FEATURES
 #define LWIP_FEATURES                   1
 
-// This places more objects into the static block defined by MEM_SIZE.
-// Uses mem_malloc/mem_free instead of the lwip pool allocator.
-// MEM_SIZE now needs to be increased by about 10k.
-// It doesn't magically produce extra memory, and causes crashes.
-// There is also a performance loss, apparently. AVOID.
-#undef MEMP_MEM_MALLOC
-#define MEMP_MEM_MALLOC		            	1
-
 #undef MEM_LIBC_MALLOC                 
 #define MEM_LIBC_MALLOC                 1
 
-#undef MEM_USE_POOLS
-#define MEM_USE_POOLS                   0
+#undef MEMP_MEM_MALLOC
+#define MEMP_MEM_MALLOC		            	1
 
-#undef MEMP_USE_CUSTOM_POOLS
-#define MEMP_USE_CUSTOM_POOLS           0
-
-#undef MEM_USE_POOLS_TRY_BIGGER_POOL   
-#define MEM_USE_POOLS_TRY_BIGGER_POOL   0
-
-// MEM_SIZE: the size of the heap memory. This is a statically allocated block.
-// // If MEMP_MEM_MALLOC=0, this holds just the PBUF_ stuff.
-// // If MEMP_MEM_MALLOC=1 (which is not reliable) this greatly expands and needs 16k+.
-// // Empirically this needs to be big enough for at least 4 x PBUF_POOL_BUFSIZE.
-// // 6k yields a good speed and going to 8k+ makes a minimal improvement. The main
-// // factor affecting speed is the poll period in ethernetif_input().
+// MEM_SIZE: the size of the heap memory. This is a statically allocated block. Empirically this needs to be big enough for at least 4 x PBUF_POOL_BUFSIZE.
 #undef MEM_SIZE
-#define MEM_SIZE                        (20*1024)
+#define MEM_SIZE                        (24*1024)
 
 #undef TCP_MSS
 #define TCP_MSS                         1460
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (18*1024)
+#define TCP_SND_BUF                     65535
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
@@ -118,43 +99,35 @@
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
    should be set high (>1024). */
-// each 1 is 20 bytes of static RAM
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   4
+#define MEMP_NUM_PBUF                   1024
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
-// each 1 is 145 bytes of static RAM
-// should normally be less than or equal to TCP_SND_BUF / PBUF_POOL_BUFSIZE
 // statistically Light users concurrent active tcp connections are 30-50 connections on average with peaks of up to 120-250
 // while for Heavy users concurrent active tcp connections are 60-100 connections on average with peaks of up to 250-500
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                32 
+#define MEMP_NUM_TCP_PCB                250 
 
-/* MEMP_NUM_TCP_PCB_LISTEN: the number of listening TCP
-   connections. */
-// each 1 is 28 bytes of static RAM
-// should normally be less than MEMP_NUM_TCP_PCB
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         16 
+#define MEMP_NUM_TCP_PCB_LISTEN         100 
 
-#undef MEMP_NUM_UDP_PCB                
-#define MEMP_NUM_UDP_PCB                8
+#undef MEMP_NUM_UDP_PCB  
+#define MEMP_NUM_UDP_PCB                16 
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. */
-// each 1 is 20 bytes of static RAM
 // MEMP_NUM_TCP_SEG should be atleast twice the size of TCP_SND_QUEUELEN
 #undef MEMP_NUM_TCP_SEG
 #define MEMP_NUM_TCP_SEG                (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
 
-// PBUF_POOL_SIZE is the number of PBUF_POOL_BUFSIZE packet buffers in a single pool. total pool zize equals (8*512) bytes
+// PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  10
+#define PBUF_POOL_SIZE                  1024
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(2048)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(TCP_MSS+40+PBUF_LINK_ENCAPSULATION_HLEN+PBUF_LINK_HLEN)
 
 #undef IP_FORWARD
 #define IP_FORWARD                      1
@@ -175,10 +148,21 @@
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
 
+/**
+ * LWIP_NETIF_TX_SINGLE_PBUF: if this is set to 1, lwIP *tries* to put all data
+ * to be sent into one single pbuf. This is for compatibility with DMA-enabled
+ * MACs that do not support scatter-gather.
+ * Beware that this might involve CPU-memcpy before transmitting that would not
+ * be needed without this flag! Use this only if you need to!
+ */
+#undef LWIP_NETIF_TX_SINGLE_PBUF
+#define LWIP_NETIF_TX_SINGLE_PBUF       0 // may be needed by esp8266 physical layer
+
+
 /* ---------- Statistics options ---------- */
 
-#define LWIP_STATS              1
-#define LWIP_STATS_DISPLAY      1
+#define LWIP_STATS              0
+#define LWIP_STATS_DISPLAY      0
 
 #if LWIP_STATS
 #define LINK_STATS              0
