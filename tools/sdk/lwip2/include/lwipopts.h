@@ -69,6 +69,9 @@
 #undef MEMP_MEM_MALLOC
 #define MEMP_MEM_MALLOC		            	1
 
+#undef MEMP_MEM_MALLOC_CHECK_MAX       
+#define MEMP_MEM_MALLOC_CHECK_MAX       1
+
 // MEM_SIZE: the size of the heap memory. This is a statically allocated block. Empirically this needs to be big enough for at least 4 x PBUF_POOL_BUFSIZE.
 #undef MEM_SIZE
 #define MEM_SIZE                        (24*1024)
