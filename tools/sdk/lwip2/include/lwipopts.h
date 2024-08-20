@@ -87,7 +87,7 @@
 #undef TCP_SND_QUEUELEN
 #define TCP_SND_QUEUELEN                ((4 * (TCP_SND_BUF) + (TCP_MSS - 1))/(TCP_MSS))
 
-// TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size
+// It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size and should not be larger than available memory. If you advertise a larger window than you have memory to accept, the remote will continue sending data to you leading to out of sequence packet delays and use of all pbufs for missing data.
 #undef TCP_WND
 #define TCP_WND                         TCP_SND_BUF
 
@@ -122,9 +122,6 @@
 #define MEMP_NUM_TCP_SEG                (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
 
 
-#undef MEMP_NUM_SYS_TIMEOUT            
-#define MEMP_NUM_SYS_TIMEOUT            10  
-
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
 #define PBUF_POOL_SIZE                  8
@@ -139,8 +136,9 @@
 #undef LWIP_DHCP
 #define LWIP_DHCP                       1
 
+// Should be a reasonable value to prevent processor from being too busy processing the TCP timer to do any real work
 #undef TCP_TMR_INTERVAL
-#define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
+#define TCP_TMR_INTERVAL                250  /* The TCP timer interval in milliseconds. */
 
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
