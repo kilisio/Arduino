@@ -76,7 +76,7 @@
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (12 * 1024)
+#define TCP_SND_BUF                     (16*1024)
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
@@ -84,13 +84,7 @@
 
 // TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size
 #undef TCP_WND
-#define TCP_WND                         65535
-
-// #undef LWIP_WND_SCALE                  
-// #define LWIP_WND_SCALE                  1
-//
-// #undef TCP_RCV_SCALE                   
-// #define TCP_RCV_SCALE                   0 // 0..14
+#define TCP_WND                         TCP_SND_BUF
 
 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
 #undef MEMP_SANITY_CHECK
@@ -122,13 +116,17 @@
 #undef MEMP_NUM_TCP_SEG
 #define MEMP_NUM_TCP_SEG                (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
 
+
+#undef MEMP_NUM_SYS_TIMEOUT            
+#define MEMP_NUM_SYS_TIMEOUT            10  
+
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  64
+#define PBUF_POOL_SIZE                  8
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(TCP_MSS+40+PBUF_LINK_ENCAPSULATION_HLEN+PBUF_LINK_HLEN)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(3072)
 
 #undef IP_FORWARD
 #define IP_FORWARD                      1
@@ -141,17 +139,6 @@
 
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
-
-/**
- * LWIP_NETIF_TX_SINGLE_PBUF: if this is set to 1, lwIP *tries* to put all data
- * to be sent into one single pbuf. This is for compatibility with DMA-enabled
- * MACs that do not support scatter-gather.
- * Beware that this might involve CPU-memcpy before transmitting that would not
- * be needed without this flag! Use this only if you need to!
- */
-#undef LWIP_NETIF_TX_SINGLE_PBUF
-#define LWIP_NETIF_TX_SINGLE_PBUF       0 // may be needed by esp8266 physical layer
-
 
 /* ---------- Statistics options ---------- */
 
