@@ -80,11 +80,11 @@
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (16*1024)
+#define TCP_SND_BUF                     (8*1024)
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                128 // ((4 * (TCP_SND_BUF) + (TCP_MSS - 1))/(TCP_MSS))
+#define TCP_SND_QUEUELEN                ((4 * (TCP_SND_BUF) + (TCP_MSS - 1))/(TCP_MSS))
 
 // It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size and should not be larger than available memory. If you advertise a larger window than you have memory to accept, the remote will continue sending data to you leading to out of sequence packet delays and use of all pbufs for missing data.
 #undef TCP_WND
@@ -115,16 +115,16 @@
 // statistically Light users concurrent active tcp connections are 30-50 connections on average with peaks of up to 120-250
 // while for Heavy users concurrent active tcp connections are 60-100 connections on average with peaks of up to 250-500
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                150 // 8
+#define MEMP_NUM_TCP_PCB                 8
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         50 // 4 
+#define MEMP_NUM_TCP_PCB_LISTEN          4 
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. */
 // MEMP_NUM_TCP_SEG should be atleast twice the size of TCP_SND_QUEUELEN
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                256 // (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
+#define MEMP_NUM_TCP_SEG                 (4*(TCP_WND + TCP_SND_BUF) / TCP_MSS)
 
 
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
@@ -133,7 +133,7 @@
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(4096)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(1536)
 
 #undef IP_FORWARD
 #define IP_FORWARD                      1
@@ -145,8 +145,8 @@
 #undef TCP_TMR_INTERVAL
 #define TCP_TMR_INTERVAL                250  /* The TCP timer interval in milliseconds. */
 
-#undef LWIP_CHECKSUM_ON_COPY           
-#define LWIP_CHECKSUM_ON_COPY           1
+// #undef LWIP_CHECKSUM_ON_COPY           
+// #define LWIP_CHECKSUM_ON_COPY           1
 
 /* ---------- Statistics options ---------- */
 
