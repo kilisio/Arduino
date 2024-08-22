@@ -78,7 +78,7 @@
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     65535
+#define TCP_SND_BUF                     (8*1024)
 
 // must be less than 256
 #undef TCP_SND_QUEUELEN
@@ -88,11 +88,11 @@
 #undef TCP_WND
 #define TCP_WND                         TCP_SND_BUF
 
-#undef LWIP_WND_SCALE                  
-#define LWIP_WND_SCALE                  1
-
-#undef TCP_RCV_SCALE                   
-#define TCP_RCV_SCALE                   0 // 0..14
+// #undef LWIP_WND_SCALE                  
+// #define LWIP_WND_SCALE                  1
+//
+// #undef TCP_RCV_SCALE                   
+// #define TCP_RCV_SCALE                   0 // 0..14
 
 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
 #undef MEMP_SANITY_CHECK
@@ -105,20 +105,17 @@
    sends a lot of data out of ROM (or other static memory), this
    should be set high (>1024). */
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   1024
+#define MEMP_NUM_PBUF                   10
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
 // statistically Light users concurrent active tcp connections are 30-50 connections on average with peaks of up to 120-250
 // while for Heavy users concurrent active tcp connections are 60-100 connections on average with peaks of up to 250-500
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                250 
+#define MEMP_NUM_TCP_PCB                8 
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         100 
-
-#undef MEMP_NUM_UDP_PCB  
-#define MEMP_NUM_UDP_PCB                16 
+#define MEMP_NUM_TCP_PCB_LISTEN         4 
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. */
@@ -128,11 +125,11 @@
 
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  1024
+#define PBUF_POOL_SIZE                  8
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(TCP_MSS+40+PBUF_LINK_ENCAPSULATION_HLEN+PBUF_LINK_HLEN)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(3072)
 
 #undef IP_FORWARD
 #define IP_FORWARD                      1
@@ -140,12 +137,8 @@
 #undef LWIP_DHCP
 #define LWIP_DHCP                       1
 
-// TCP_QUEUE_OOSEQ=0 turns off queuing of packets that are out of sequence, forcing the host to re-send (which it will anyway), but avoiding the duplicate acknowledgements.
-#undef TCP_QUEUE_OOSEQ
-#define TCP_QUEUE_OOSEQ                 0
-
-#undef LWIP_TCP_SACK_OUT
-#define LWIP_TCP_SACK_OUT               0
+#undef TCP_MSL  
+#define TCP_MSL 100UL /* The maximum segment lifetime in milliseconds */
 
 #undef TCP_TMR_INTERVAL
 #define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
@@ -153,35 +146,10 @@
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
 
-/**
- * LWIP_NETIF_TX_SINGLE_PBUF: if this is set to 1, lwIP *tries* to put all data
- * to be sent into one single pbuf. This is for compatibility with DMA-enabled
- * MACs that do not support scatter-gather.
- * Beware that this might involve CPU-memcpy before transmitting that would not
- * be needed without this flag! Use this only if you need to!
- */
-#undef LWIP_NETIF_TX_SINGLE_PBUF
-#define LWIP_NETIF_TX_SINGLE_PBUF       0 // may be needed by esp8266 physical layer
-
-
 /* ---------- Statistics options ---------- */
 
 #define LWIP_STATS              0
 #define LWIP_STATS_DISPLAY      0
-
-#if LWIP_STATS
-#define LINK_STATS              0
-#define IP_STATS                0
-#define ICMP_STATS              0
-#define IGMP_STATS              0
-#define IPFRAG_STATS            0
-#define UDP_STATS               0
-#define TCP_STATS               0
-#define MEM_STATS               1
-#define MEMP_STATS              1
-#define PBUF_STATS              1
-#define SYS_STATS               1
-#endif /* LWIP_STATS */
 
 /**
  * @defgroup lwip_opts Options (lwipopts.h)
