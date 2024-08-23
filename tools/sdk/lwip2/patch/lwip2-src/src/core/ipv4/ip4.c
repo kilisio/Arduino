@@ -230,6 +230,9 @@ ip4_route(const ip4_addr_t *dest)
 }
 
 #if IP_FORWARD
+
+/* ---------- NAPT BEGIN ---------- */
+
 #if IP_NAPT
 
 #define NO_IDX ((u16_t)-1)
@@ -963,6 +966,9 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
 }
 #endif // IP_NAPT
 
+
+/* ---------- NAPT END ---------- */
+
 /**
  * Determine whether an IP address is in a reserved set of addresses
  * that may not be forwarded, or whether datagrams to that destination
@@ -1064,10 +1070,14 @@ ip4_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp)
     return;
   }
 
+/* ---------- NAPT BEGIN ---------- */
+
 #if IP_NAPT
   if (ip_napt_forward(p, iphdr, inp, netif) != ERR_OK)
     return;
 #endif
+
+/* ---------- NAPT END ---------- */
 
   /* Incrementally update the IP checksum. */
   if (IPH_CHKSUM(iphdr) >= PP_HTONS(0xffffU - 0x100)) {
@@ -1251,12 +1261,16 @@ ip4_input(struct pbuf *p, struct netif *inp)
   }
 #endif
 
+/* ---------- NAPT BEGIN ---------- */
+
 #if IP_NAPT
   /* for unicast packet, check NAPT table and modify dest if needed */
   /* iphdr is const, use p->payload instead */
   if (!inp->napt && ip4_addr_cmp(&iphdr->dest, netif_ip4_addr(inp)))
     ip_napt_recv(p, (struct ip_hdr *)p->payload);
 #endif
+
+/* ---------- NAPT END ---------- */
 
   /* copy IP addresses to aligned ip_addr_t */
   ip_addr_copy_from_ip4(ip_data.current_iphdr_dest, iphdr->dest);
@@ -1368,6 +1382,9 @@ ip4_input(struct pbuf *p, struct netif *inp)
 #if IP_FORWARD
     /* non-broadcast packet? */
     if (!ip4_addr_isbroadcast(ip4_current_dest_addr(), inp)) {
+
+/* ---------- NAPT BEGIN ---------- */
+
       /* the header modification in ip4_forward may not work on PBUF_REF */
       /* so make a copy of packet */
       if (p->type_internal == PBUF_REF) {
@@ -1378,6 +1395,9 @@ ip4_input(struct pbuf *p, struct netif *inp)
               p = q;
           }
       }
+
+/* ---------- NAPT END ---------- */
+
       /* try to forward IP packet on (other) interfaces */
       ip4_forward(p, (struct ip_hdr *)p->payload, inp);
     } else

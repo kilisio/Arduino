@@ -363,9 +363,13 @@ netif_add(struct netif *netif,
   netif->loop_cnt_current = 0;
 #endif /* ENABLE_LOOPBACK && LWIP_LOOPBACK_MAX_PBUFS */
 
+/* ---------- NAPT BEGIN ---------- */
+
 #if IP_NAPT
   netif->napt = 0;
 #endif /* IP_NAPT */
+
+/* ---------- NAPT END ---------- */
 
 #if LWIP_IPV4
   netif_set_addr(netif, ipaddr, netmask, gw);
