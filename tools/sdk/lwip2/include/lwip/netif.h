@@ -387,10 +387,15 @@ struct netif {
   u16_t loop_cnt_current;
 #endif /* LWIP_LOOPBACK_MAX_PBUFS */
 #endif /* ENABLE_LOOPBACK */
+
+/* ---------- NAPT BEGIN ---------- */
+
 #if LWIP_IPV4 && IP_NAPT
   u8_t napt;
 #endif
 };
+
+/* ---------- NAPT END ---------- */
 
 #if LWIP_CHECKSUM_CTRL_PER_NETIF
 #define NETIF_SET_CHECKSUM_CTRL(netif, chksumflags) do { \
