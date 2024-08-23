@@ -20,6 +20,9 @@ all: patches $(LWIP_LIB)
 patches: .patched
 
 .patched:
+
+	rm -rf ../../../builder/patches/napt*
+
 	for p in ../../patches/*.patch; do echo "--------- APPLY PATCH $${p#../../}:"; patch -d .. -p1 < $$p; done
 ifeq ($(target),open)
 	patch -d .. -p1 < ../../patches/open/sdk-mem-macros.patch
