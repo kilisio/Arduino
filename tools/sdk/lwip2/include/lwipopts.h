@@ -112,10 +112,10 @@
 // statistically Light users concurrent active tcp connections are 30-50 connections on average with peaks of up to 120-250
 // while for Heavy users concurrent active tcp connections are 60-100 connections on average with peaks of up to 250-500
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                64 
+#define MEMP_NUM_TCP_PCB                128 
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         16 
+#define MEMP_NUM_TCP_PCB_LISTEN         32 
 
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
@@ -131,11 +131,11 @@
 #undef LWIP_DHCP
 #define LWIP_DHCP                       1
 
-#undef TCP_MSL  
-#define TCP_MSL 100UL /* The maximum segment lifetime in milliseconds */
-
-#undef TCP_TMR_INTERVAL
-#define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
+// #undef TCP_MSL  
+// #define TCP_MSL 100UL /* The maximum segment lifetime in milliseconds */TCP_TMR_INTERVAL
+//
+// #undef TCP_TMR_INTERVAL
+// #define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
 
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
