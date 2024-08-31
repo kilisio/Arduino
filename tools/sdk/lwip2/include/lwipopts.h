@@ -71,28 +71,30 @@
 
 // MEM_SIZE: the size of the heap memory. This is a statically allocated block. Empirically this needs to be big enough for at least 4 x PBUF_POOL_BUFSIZE.
 #undef MEM_SIZE
-#define MEM_SIZE                        (24*1024)
+#define MEM_SIZE                        (32*1024)
 
 #undef TCP_MSS
 #define TCP_MSS                         1460
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (12*1024)
+#define TCP_SND_BUF                     (24*1024)
 
 // TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size
 #undef TCP_WND
 #define TCP_WND                         TCP_SND_BUF
 
-// must be less than 256
+#undef LWIP_DISABLE_TCP_SANITY_CHECKS
+#define LWIP_DISABLE_TCP_SANITY_CHECKS  1
+
+// must be less than 256 
 #undef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                (((4 * TCP_SND_BUF) + (TCP_MSS - 1)) / TCP_MSS)
+#define TCP_SND_QUEUELEN                (2 * TCP_SND_BUF / PBUF_POOL_BUFSIZE)
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
-   segments. */
-// MEMP_NUM_TCP_SEG should be atleast twice the size of TCP_SND_QUEUELEN
+   segments. (2 * TCP_SND_QUEUELEN) */
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                (4 * (TCP_WND + TCP_SND_BUF) / TCP_MSS)
+#define MEMP_NUM_TCP_SEG                (2 * TCP_SND_QUEUELEN)
 
 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
 #undef MEMP_SANITY_CHECK
@@ -112,14 +114,14 @@
 // statistically Light users concurrent active tcp connections are 30-50 connections on average with peaks of up to 120-250
 // while for Heavy users concurrent active tcp connections are 60-100 connections on average with peaks of up to 250-500
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                128 
+#define MEMP_NUM_TCP_PCB                (4 * TCP_SND_QUEUELEN)
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         32 
+#define MEMP_NUM_TCP_PCB_LISTEN         TCP_SND_QUEUELEN 
 
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  32
+#define PBUF_POOL_SIZE                  (2 * MEM_SIZE / PBUF_POOL_BUFSIZE)
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
@@ -131,11 +133,11 @@
 #undef LWIP_DHCP
 #define LWIP_DHCP                       1
 
-// #undef TCP_MSL  
-// #define TCP_MSL 100UL /* The maximum segment lifetime in milliseconds */TCP_TMR_INTERVAL
-//
-// #undef TCP_TMR_INTERVAL
-// #define TCP_TMR_INTERVAL                100  /* The TCP timer interval in milliseconds. */
+#undef TCP_MSL  
+#define TCP_MSL 100UL /* The maximum segment lifetime in milliseconds */
+
+#undef TCP_TMR_INTERVAL
+#define TCP_TMR_INTERVAL                25  /* The TCP timer interval in milliseconds. */
 
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
