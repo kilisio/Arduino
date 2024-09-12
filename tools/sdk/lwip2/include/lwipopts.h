@@ -137,7 +137,7 @@
 #define TCP_MSL 100UL /* The maximum segment lifetime in milliseconds */
 
 #undef TCP_TMR_INTERVAL
-#define TCP_TMR_INTERVAL                25  /* The TCP timer interval in milliseconds. */
+#define TCP_TMR_INTERVAL                250  /* The TCP timer interval in milliseconds. */
 
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
