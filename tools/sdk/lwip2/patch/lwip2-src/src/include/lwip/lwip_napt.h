@@ -60,10 +60,10 @@ extern "C" {
 
 /* Timeouts in sec for the various protocol types */
 #ifndef IP_NAPT_TIMEOUT_MS_TCP
-#define IP_NAPT_TIMEOUT_MS_TCP (5*60*1000)
+#define IP_NAPT_TIMEOUT_MS_TCP (2*60*1000)
 #endif
 #ifndef IP_NAPT_TIMEOUT_MS_TCP_DISCON
-#define IP_NAPT_TIMEOUT_MS_TCP_DISCON (TCP_MSL)
+#define IP_NAPT_TIMEOUT_MS_TCP_DISCON (2*1000)
 #endif
 #ifndef IP_NAPT_TIMEOUT_MS_UDP
 #define IP_NAPT_TIMEOUT_MS_UDP (2*1000)
