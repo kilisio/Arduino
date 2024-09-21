@@ -136,6 +136,12 @@
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
 
+#undef TCP_QUEUE_OOSEQ                 
+#define TCP_QUEUE_OOSEQ                 0
+
+#undef LWIP_TCP_SACK_OUT               
+#define LWIP_TCP_SACK_OUT               0
+
 /* ---------- Statistics options ---------- */
 
 #define LWIP_STATS              0
