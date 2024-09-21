@@ -84,7 +84,7 @@
 
 // must be less than 256 
 #undef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                (2 * TCP_SND_BUF / PBUF_POOL_BUFSIZE)
+#define TCP_SND_QUEUELEN                (8 * TCP_SND_BUF / PBUF_POOL_BUFSIZE)
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. (2 * TCP_SND_QUEUELEN) */
@@ -116,7 +116,7 @@
 
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  (2 * MEM_SIZE / PBUF_POOL_BUFSIZE)
+#define PBUF_POOL_SIZE                  (8 * MEM_SIZE / PBUF_POOL_BUFSIZE)
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
