@@ -92,11 +92,6 @@
 #undef TCP_SND_QUEUELEN
 #define TCP_SND_QUEUELEN                (TCP_SND_BUF / PBUF_POOL_BUFSIZE)
 
-/* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
-   segments. (2 * TCP_SND_QUEUELEN) */
-#undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                (2 * TCP_SND_QUEUELEN)
-
 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
 #undef MEMP_SANITY_CHECK
 #define MEMP_SANITY_CHECK               0
@@ -108,15 +103,20 @@
    sends a lot of data out of ROM (or other static memory), this
    should be set high (>1024). */
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   (MEM_SIZE / PBUF_POOL_BUFSIZE)
+#define MEMP_NUM_PBUF                   PBUF_POOL_SIZE
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                4
+#define MEMP_NUM_TCP_PCB                PBUF_POOL_SIZE
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         2 
+#define MEMP_NUM_TCP_PCB_LISTEN         (MEMP_NUM_TCP_PCB / 2) 
+
+/* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
+   segments. (2 * TCP_SND_QUEUELEN) */
+#undef MEMP_NUM_TCP_SEG
+#define MEMP_NUM_TCP_SEG                (MEMP_NUM_TCP_PCB * TCP_SND_QUEUELEN)
 
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
@@ -124,7 +124,7 @@
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(2048)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(4096)
 
 #undef IP_FORWARD
 #define IP_FORWARD                      1
@@ -134,12 +134,6 @@
 
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
-
-#undef TCP_QUEUE_OOSEQ                 
-#define TCP_QUEUE_OOSEQ                 0
-
-#undef LWIP_TCP_SACK_OUT               
-#define LWIP_TCP_SACK_OUT               0
 
 /* ---------- Statistics options ---------- */
 /* ---------- Statistics options ---------- */
