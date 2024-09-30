@@ -135,6 +135,16 @@
 #undef LWIP_CHECKSUM_ON_COPY           
 #define LWIP_CHECKSUM_ON_COPY           1
 
+// ip napt settings
+#undef IP_NAPT                         
+#define IP_NAPT                         1
+
+#undef IP_NAPT_MAX 
+#define IP_NAPT_MAX                     256
+
+#undef IP_NAPT_PORTMAP 
+#define IP_NAPT_PORTMAP                 0
+
 /* ---------- Statistics options ---------- */
 /* ---------- Statistics options ---------- */
 
