@@ -103,12 +103,12 @@
    sends a lot of data out of ROM (or other static memory), this
    should be set high (>1024). */
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   PBUF_POOL_SIZE
+#define MEMP_NUM_PBUF                   (MEM_SIZE / PBUF_POOL_BUFSIZE)
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                PBUF_POOL_SIZE
+#define MEMP_NUM_TCP_PCB                (MEM_SIZE / PBUF_POOL_BUFSIZE)
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
 #define MEMP_NUM_TCP_PCB_LISTEN         (MEMP_NUM_TCP_PCB / 2) 
@@ -116,11 +116,11 @@
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. (2 * TCP_SND_QUEUELEN) */
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                (MEMP_NUM_TCP_PCB * TCP_SND_QUEUELEN)
+#define MEMP_NUM_TCP_SEG                (MEM_SIZE / PBUF_POOL_BUFSIZE)
 
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  (MEM_SIZE / PBUF_POOL_BUFSIZE)
+#define PBUF_POOL_SIZE                  MEMP_NUM_TCP_SEG
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
@@ -136,11 +136,13 @@
 #define LWIP_CHECKSUM_ON_COPY           1
 
 // ip napt settings
+// Memory usage at 512: Heap from 30136 to 17632: 12504
+// Memory usage at 128: Heap from 30136 to 26848: 3288
 #undef IP_NAPT                         
 #define IP_NAPT                         1
 
 #undef IP_NAPT_MAX 
-#define IP_NAPT_MAX                     256
+#define IP_NAPT_MAX                     512
 
 #undef IP_NAPT_PORTMAP 
 #define IP_NAPT_PORTMAP                 0
