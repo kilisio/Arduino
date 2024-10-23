@@ -71,7 +71,7 @@
 
 // MEM_SIZE: the size of the heap memory. This is a statically allocated block. Empirically this needs to be big enough for at least 4 x PBUF_POOL_BUFSIZE.
 #undef MEM_SIZE
-#define MEM_SIZE                        (32*1024)
+#define MEM_SIZE                        (33*1024)
 
 #undef TCP_MSS
 #define TCP_MSS                         1460
@@ -103,12 +103,12 @@
    sends a lot of data out of ROM (or other static memory), this
    should be set high (>1024). */
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   PBUF_POOL_SIZE
+#define MEMP_NUM_PBUF                   (MEM_SIZE / PBUF_POOL_BUFSIZE)
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                PBUF_POOL_SIZE
+#define MEMP_NUM_TCP_PCB                (TCP_SND_QUEUELEN / 2)
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
 #define MEMP_NUM_TCP_PCB_LISTEN         (MEMP_NUM_TCP_PCB / 2) 
@@ -116,15 +116,15 @@
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. (2 * TCP_SND_QUEUELEN) */
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                (MEMP_NUM_TCP_PCB * TCP_SND_QUEUELEN)
+#define MEMP_NUM_TCP_SEG                (TCP_SND_QUEUELEN * 2)
 
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  (MEM_SIZE / PBUF_POOL_BUFSIZE)
+#define PBUF_POOL_SIZE                  MEMP_NUM_PBUF
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(4096)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(3072)
 
 #undef IP_FORWARD
 #define IP_FORWARD                      1
@@ -136,14 +136,23 @@
 #define LWIP_CHECKSUM_ON_COPY           1
 
 // ip napt settings
+// Memory usage at 512: Heap from 30136 to 17632: 12504
+// Memory usage at 128: Heap from 30136 to 26848: 3288
 #undef IP_NAPT                         
 #define IP_NAPT                         1
 
 #undef IP_NAPT_MAX 
-#define IP_NAPT_MAX                     256
+#define IP_NAPT_MAX                     512
 
 #undef IP_NAPT_PORTMAP 
 #define IP_NAPT_PORTMAP                 0
+
+// do not send out of order packets
+#undef TCP_QUEUE_OOSEQ                 
+#define TCP_QUEUE_OOSEQ                 0
+
+#undef LWIP_TCP_SACK_OUT               
+#define LWIP_TCP_SACK_OUT               0
 
 /* ---------- Statistics options ---------- */
 /* ---------- Statistics options ---------- */

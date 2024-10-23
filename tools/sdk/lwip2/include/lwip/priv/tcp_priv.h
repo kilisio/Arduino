@@ -99,7 +99,7 @@ err_t            tcp_process_refused_data(struct tcp_pcb *pcb);
 #define TCP_SEQ_BETWEEN(a,b,c) (TCP_SEQ_GEQ(a,b) && TCP_SEQ_LEQ(a,c))
 
 #ifndef TCP_TMR_INTERVAL
-#define TCP_TMR_INTERVAL       250  /* The TCP timer interval in milliseconds. */
+#define TCP_TMR_INTERVAL       100  /* The TCP timer interval in milliseconds. */
 #endif /* TCP_TMR_INTERVAL */
 
 #ifndef TCP_FAST_INTERVAL
@@ -116,7 +116,7 @@ err_t            tcp_process_refused_data(struct tcp_pcb *pcb);
 #define TCP_OOSEQ_TIMEOUT        6U /* x RTO */
 
 #ifndef TCP_MSL
-#define TCP_MSL 60000UL /* The maximum segment lifetime in milliseconds */
+#define TCP_MSL 100UL /* The maximum segment lifetime in milliseconds */
 #endif
 
 /* Keepalive values, compliant with RFC 1122. Don't change this unless you know what you're doing */
