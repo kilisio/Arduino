@@ -3,11 +3,6 @@
 #define __CUSTOM_EXTRA_DEFINES__
 
 #endif
-// this file will be overwritten upon lwip2 rebuild
-#ifndef __CUSTOM_EXTRA_DEFINES__
-#define __CUSTOM_EXTRA_DEFINES__
-
-#endif
 #ifndef MYLWIPOPTS_H
 #define MYLWIPOPTS_H
 

@@ -2,5 +2,6 @@
 
 BASEDIR="$(cd "$(dirname "$0")" && pwd)"
 
-# rm -rf $BASEDIR/builder/glue-lwip/arduino/*
+rm -rf $BASEDIR/builder/glue-lwip/arduino/*
+
 cp -rf $BASEDIR/patch/. $BASEDIR/builder/
