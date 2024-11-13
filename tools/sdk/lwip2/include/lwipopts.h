@@ -176,6 +176,91 @@
 #undef LWIP_TCP_SACK_OUT
 #define LWIP_TCP_SACK_OUT               0
 
+// ip napt settings
+// Memory usage at 512: Heap from 30136 to 17632: 12504
+// Memory usage at 128: Heap from 30136 to 26848: 3288
+#undef IP_NAPT
+#define IP_NAPT                         1
+
+#undef IP_NAPT_MAX
+#define IP_NAPT_MAX                     512
+
+#undef IP_NAPT_PORTMAP
+#define IP_NAPT_PORTMAP                 0
+
+#undef IP_PORTMAP_MAX
+#define IP_PORTMAP_MAX                  10
+
+
+
+/* ---------- esp-lwip options ---------- */
+#define ESP_LWIP                                1
+#define ESP_LWIP_IP4_REASSEMBLY_TIMERS_ONDEMAND ESP_LWIP
+#define ESP_LWIP_DNS_TIMERS_ONDEMAND            ESP_LWIP
+#define ESP_LWIP_DHCP_FINE_TIMERS_ONDEMAND      ESP_LWIP
+#define ESP_LWIP_IGMP_TIMERS_ONDEMAND           ESP_LWIP
+#define ESP_LWIP_MLD6_TIMERS_ONDEMAND           ESP_LWIP
+#define ESP_DNS                                 ESP_LWIP
+#define ESP_LWIP_ARP                            ESP_LWIP
+#define LWIP_MDNS_RESPONDER                     1
+#define MEMP_NUM_SYS_TIMEOUT                    (LWIP_NUM_SYS_TIMEOUT_INTERNAL + 8)
+#define MEMP_NUM_REASSDATA                      IP_REASS_MAX_PBUFS
+#define IP_FRAG                                 1
+#define LWIP_AUTOIP_MAX_CONFLICTS               10
+#define LWIP_AUTOIP_RATE_LIMIT_INTERVAL         60
+#define DNS_FALLBACK_SERVER_INDEX               (DNS_MAX_SERVERS - 1)
+#define LWIP_NUM_NETIF_CLIENT_DATA      (LWIP_MDNS_RESPONDER)
+#define LWIP_TCP_RTO_TIME                       1000
+
+/* esp-lwip DHCP options*/
+#define LWIP_DHCP_ENABLE_VENDOR_SPEC_IDS        1
+#define LWIP_DHCP_ENABLE_CLIENT_ID              1
+#define LWIP_DHCP_ENABLE_MTU_UPDATE             1
+#if LWIP_DHCP_ENABLE_VENDOR_SPEC_IDS
+#define DHCP_OPTION_VSI                         43
+#define LWIP_HOOK_DHCP_EXTRA_REQUEST_OPTIONS , DHCP_OPTION_VSI
+#endif
+
+#define DHCP_DEFINE_CUSTOM_TIMEOUTS             1
+#define DHCP_COARSE_TIMER_SECS                  (1)
+#define DHCP_NEXT_TIMEOUT_THRESHOLD             (3)
+#define DHCP_REQUEST_TIMEOUT_SEQUENCE(tries)   ((uint16_t)(((tries) < 5 ? 1 << (tries) : 16) * 250))
+
+#include <stdint.h>
+static inline uint32_t timeout_from_offered(uint32_t lease, uint32_t min)
+{
+    uint32_t timeout = lease;
+    if (timeout == 0) {
+        timeout = min;
+    }
+    return timeout;
+}
+#define DHCP_CALC_TIMEOUT_FROM_OFFERED_T0_LEASE(dhcp)  \
+        timeout_from_offered((dhcp)->offered_t0_lease, 120)
+#define DHCP_CALC_TIMEOUT_FROM_OFFERED_T1_RENEW(dhcp)  \
+        timeout_from_offered((dhcp)->offered_t1_renew, (dhcp)->t0_timeout>>1 /* 50% */ )
+#define DHCP_CALC_TIMEOUT_FROM_OFFERED_T2_REBIND(dhcp) \
+        timeout_from_offered((dhcp)->offered_t2_rebind, ((dhcp)->t0_timeout/8)*7 /* 87.5% */ )
+
+struct dhcp;
+struct pbuf;
+struct dhcp;
+struct netif;
+struct dhcp_msg;
+void dhcp_parse_extra_opts(struct dhcp *dhcp, uint8_t state, uint8_t option, uint8_t len, struct pbuf* p, uint16_t offset);
+void dhcp_append_extra_opts(struct netif *netif, uint8_t state, struct dhcp_msg *msg_out, uint16_t *options_out_len);
+int dhcp_set_vendor_class_identifier(uint8_t len, const char * str);
+int dhcp_get_vendor_specific_information(uint8_t len, char * str);
+void dhcp_free_vendor_class_identifier(void);
+
+
+#define LWIP_HOOK_DHCP_PARSE_OPTION(netif, dhcp, state, msg, msg_type, option, len, pbuf, offset)   \
+        do {    LWIP_UNUSED_ARG(msg);                                           \
+                dhcp_parse_extra_opts(dhcp, state, option, len, pbuf, offset);  \
+            } while(0)
+
+#define LWIP_HOOK_DHCP_APPEND_OPTIONS(netif, dhcp, state, msg, msg_type, options_len_ptr) \
+        dhcp_append_extra_opts(netif, state, msg, options_len_ptr);
 
 /* ---------- Checksum options ---------- */
 #define LWIP_CHECKSUM_CTRL_PER_NETIF      1
@@ -669,12 +754,6 @@
 #if !defined MEMP_NUM_IGMP_GROUP || defined __DOXYGEN__
 #define MEMP_NUM_IGMP_GROUP             8
 #endif
-
-/**
- * The number of sys timeouts used by the core stack (not apps)
- * The default number of timeouts is calculated here for all enabled modules.
- */
-#define LWIP_NUM_SYS_TIMEOUT_INTERNAL   (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_NUM_TIMEOUTS + (LWIP_IPV6 * (1 + LWIP_IPV6_REASS + LWIP_IPV6_MLD)))
 
 /**
  * MEMP_NUM_SYS_TIMEOUT: the number of simultaneously active timeouts.
@@ -3746,37 +3825,6 @@ extern "C" {
 
 /*
    --------------------------------------------------
-   ------------------ DHCP options ------------------
-   --------------------------------------------------
-*/
-
-#define LWIP_HOOK_DHCP_PARSE_OPTION(netif, dhcp, state, msg, msg_type, option, len, pbuf, option_value_offset) \
-    lwip_hook_dhcp_parse_option(netif, dhcp, state, msg, msg_type, option, len, pbuf, option_value_offset)
-
-// search for LWIP_HOOK_DHCP_PARSE_OPTION above for an arguments explanation
-struct netif;
-struct dhcp;
-struct dhcp_msg;
-struct pbuf;
-extern void lwip_hook_dhcp_parse_option(struct netif *netif, struct dhcp *dhcp, int state, struct dhcp_msg *msg,
-                                        int msg_type, int option, int option_len, struct pbuf *pbuf,
-                                        int option_value_offset);
-
-#if LWIP_FEATURES
-#define LWIP_HOOK_DHCP_APPEND_OPTIONS(netif, dhcp, state, msg, msg_type, option_len_ptr) { \
-   /* https://github.com/esp8266/Arduino/issues/8223 */ \
-   lwip_hook_dhcp_amend_options(netif, dhcp, state, msg, msg_type, option_len_ptr); \
-   /* https://github.com/esp8266/Arduino/issues/8247 */ \
-   if ((msg_type) == DHCP_DISCOVER) \
-      *(option_len_ptr) = dhcp_option_hostname(*(option_len_ptr), (msg)->options, netif); \
-}
-
-extern void lwip_hook_dhcp_amend_options(struct netif *netif, struct dhcp *dhcp, int state, struct dhcp_msg *msg,
-                                         int msg_type, u16 *option_len_ptr);
-#endif
-
-/*
-   --------------------------------------------------
    ------------------ SNTP options ------------------
    --------------------------------------------------
 */
@@ -3831,36 +3879,6 @@ LWIP_ERR_T lwip_unhandled_packet (struct pbuf* pbuf, struct netif* netif);
 
 // called when STA OR AP is set up or down
 void netif_status_changed (struct netif*);
-
-/*
-   --------------------------------------------------
-   ----------------- TIME-WAIT tweak ----------------
-   --------------------------------------------------
-   port @me-no-dev time-wait tweak
-   https://github.com/esp8266/Arduino/commit/07f4d4c241df2c552899857f39a4295164f686f2#diff-f8258e71e25fb9985ca3799e3d8b88ecR399
-*/
-
-void tcp_kill_timewait (void);
-#define TCP_TW_LIMIT(l)                \
-  if (l) do {                          \
-    u32_t count_plus_1 = 1;            \
-    struct tcp_pcb* tmp = tcp_tw_pcbs; \
-    if (tmp)                           \
-      while ((tmp = tmp->next))        \
-        ++count_plus_1;                \
-    while (--count_plus_1 > (l))       \
-      /* kill the oldest */            \
-      /* pcb in TW state */            \
-      tcp_kill_timewait();             \
-  } while (0)
-
-/**
- * MEMP_NUM_TCP_PCB_TIME_WAIT: the number of TCP pcbs in TIME_WAIT state.
- * (requires the LWIP_TCP option, 0 = disabled)
- */
-#ifndef MEMP_NUM_TCP_PCB_TIME_WAIT
-#define MEMP_NUM_TCP_PCB_TIME_WAIT       5
-#endif
 
 /*
    --------------------------------------------------
