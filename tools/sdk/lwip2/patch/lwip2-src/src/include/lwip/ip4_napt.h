@@ -62,7 +62,7 @@ extern "C" {
 
 
 #ifndef NAPT_TMR_INTERVAL
-#define NAPT_TMR_INTERVAL 2000
+#define NAPT_TMR_INTERVAL 250
 #endif
 
 /**

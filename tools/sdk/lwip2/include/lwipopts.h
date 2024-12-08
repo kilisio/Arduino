@@ -86,13 +86,16 @@
    ---------------------------------------------------
 */
 #undef NO_SYS
-#define NO_SYS                          1 // 0
+#define NO_SYS                          1 
 
 #undef LWIP_FEATURES
 #define LWIP_FEATURES                   1
 
 #undef LWIP_RAW
 #define LWIP_RAW                        1
+
+#undef LWIP_IPV6
+#define LWIP_IPV6                       0
 
 /* ---------- memory options ---------- */
 #undef MEM_LIBC_MALLOC
@@ -104,9 +107,12 @@
 #undef MEM_OVERFLOW_CHECK
 #define MEM_OVERFLOW_CHECK              0
 
-// MEM_SIZE: the size of the heap memory. This is a statically allocated block. Empirically this needs to be big enough for at least 4 x PBUF_POOL_BUFSIZE.
+// MEM_SIZE: the size of the heap memory. This is a statically allocated block.
 #undef MEM_SIZE
-#define MEM_SIZE                        (32 * 1024)
+#define MEM_SIZE                        (9 * 1024)
+
+#undef MEM_ALIGNMENT
+#define MEM_ALIGNMENT                   4
 
 /* ---------- tcp options ---------- */
 #undef TCP_MSS                         
@@ -114,9 +120,9 @@
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (24 * 1024)
+#define TCP_SND_BUF                     (6 * 1024)
 
-// TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size
+// TCP_WND have to be at least a couple of segments. It should be less than total pbup_pool_size
 #undef TCP_WND
 #define TCP_WND                         TCP_SND_BUF
 
@@ -129,22 +135,27 @@
 // must be less than 256 
 // TCP_SND_QUEUELEN == 8 says that at maximum, 8 pbufs will be queued for sending per TCP pcb
 #undef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                64
+#define TCP_SND_QUEUELEN                2
+
+#undef LWIP_DISABLE_TCP_SANITY_CHECKS
+#define LWIP_DISABLE_TCP_SANITY_CHECKS  1
 
 // do not send out of order packets
 #undef TCP_QUEUE_OOSEQ
-#define TCP_QUEUE_OOSEQ                 1
+#define TCP_QUEUE_OOSEQ                 0
 
 #undef LWIP_TCP_SACK_OUT
-#define LWIP_TCP_SACK_OUT               1
+#define LWIP_TCP_SACK_OUT               0
 
 /* ---------- udp options ---------- */
 #undef LWIP_UDPLITE
-#define LWIP_UDPLITE                    1
+#define LWIP_UDPLITE                    0
 
 /* ---------- memp options ---------- */
+// determines whether malloc memory is dynamically or statically allocated 
+// (0 = static memory)
 #undef MEMP_MEM_MALLOC
-#define MEMP_MEM_MALLOC		            	1
+#define MEMP_MEM_MALLOC		            	0
 
 #undef MEMP_SANITY_CHECK
 #define MEMP_SANITY_CHECK               0 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
@@ -156,49 +167,59 @@
    sends a lot of data out of ROM (or other static memory), this
    should be set high (>1024). */
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   (TCP_SND_QUEUELEN * 4) 
+#define MEMP_NUM_PBUF                   4 
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                8
+#define MEMP_NUM_TCP_PCB                4
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         4 
+#define MEMP_NUM_TCP_PCB_LISTEN         2 
 
 #undef MEMP_NUM_UDP_PCB
 #define MEMP_NUM_UDP_PCB                4
 
 #undef MEMP_NUM_RAW_PCB
-#define MEMP_NUM_RAW_PCB                16
+#define MEMP_NUM_RAW_PCB                4
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. (2 * TCP_SND_QUEUELEN) */
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                (TCP_SND_QUEUELEN * 2)
+#define MEMP_NUM_TCP_SEG                4
 
 /* ---------- pbuf options ---------- */
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  (TCP_SND_QUEUELEN * 4) 
+#define PBUF_POOL_SIZE                  3
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(4096)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(3072)
 
 /* ---------- netif options ---------- */
 #undef LWIP_NETIF_TX_SINGLE_PBUF
 #define LWIP_NETIF_TX_SINGLE_PBUF       1
+
+/* ---------- ip options ---------- */
+#undef IP_REASS_MAX_PBUFS
+#define IP_REASS_MAX_PBUFS              3
+
+#undef MEMP_NUM_REASSDATA
+#define MEMP_NUM_REASSDATA              IP_REASS_MAX_PBUFS
+
+#undef IP_FRAG
+#define IP_FRAG                         0
 
 /* ---------- arp options ---------- */
 #undef ARP_QUEUEING
 #define ARP_QUEUEING                    1
 
 #undef ARP_QUEUE_LEN
-#define ARP_QUEUE_LEN                   2
+#define ARP_QUEUE_LEN                   3
 
 #undef MEMP_NUM_ARP_QUEUE
-#define MEMP_NUM_ARP_QUEUE              8
+#define MEMP_NUM_ARP_QUEUE              3
 
 /* ---------- napt options ---------- */
 // Memory usage at 512: Heap from 30136 to 17632: 12504
@@ -207,7 +228,7 @@
 #define IP_NAPT                         1
 
 #undef IP_NAPT_MAX
-#define IP_NAPT_MAX                     512
+#define IP_NAPT_MAX                     128
 
 #undef IP_NAPT_PORTMAP
 #define IP_NAPT_PORTMAP                 0
@@ -228,13 +249,11 @@
 #define ESP_LWIP_ARP                            ESP_LWIP
 #define LWIP_MDNS_RESPONDER                     1
 #define MEMP_NUM_SYS_TIMEOUT                    (LWIP_NUM_SYS_TIMEOUT_INTERNAL + 8)
-#define MEMP_NUM_REASSDATA                      IP_REASS_MAX_PBUFS
-#define IP_FRAG                                 1
 #define LWIP_AUTOIP_MAX_CONFLICTS               10
 #define LWIP_AUTOIP_RATE_LIMIT_INTERVAL         60
 #define DNS_FALLBACK_SERVER_INDEX               (DNS_MAX_SERVERS - 1)
 #define LWIP_NUM_NETIF_CLIENT_DATA              (LWIP_MDNS_RESPONDER)
-#define LWIP_TCP_RTO_TIME                       1000
+#define LWIP_TCP_RTO_TIME                       3000
 
 /* esp-lwip DHCP options*/
 #define LWIP_DHCP_ENABLE_VENDOR_SPEC_IDS        1
@@ -289,7 +308,7 @@ void dhcp_free_vendor_class_identifier(void);
 /* ---------- Checksum options ---------- */
 #define LWIP_CHECKSUM_CTRL_PER_NETIF      1
 #define LWIP_CHECKSUM_ON_COPY             1
-#define TCP_CHECKSUM_ON_COPY_SANITY_CHECK 1
+#define TCP_CHECKSUM_ON_COPY_SANITY_CHECK 0
 #define LWIP_CHKSUM_ALGORITHM             3 // 2
 
 #define CHECKSUM_GEN_IP                   1
@@ -306,8 +325,8 @@ void dhcp_free_vendor_class_identifier(void);
 
 /* ---------- Statistics options ---------- */
 
-#define LWIP_STATS              1
-#define LWIP_STATS_DISPLAY      1
+#define LWIP_STATS              0
+#define LWIP_STATS_DISPLAY      0
 
 #if LWIP_STATS
 #define LINK_STATS              0
