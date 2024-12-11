@@ -80,6 +80,9 @@ extern "C" {
 #endif
 
 
+
+static void ip_napt_deinit(void);
+
 /**
  * Enable/Disable NAPT for a specified interface.
  *
