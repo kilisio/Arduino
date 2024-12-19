@@ -104,7 +104,7 @@
 
 // MEM_SIZE: the size of the heap memory. This is a statically allocated block.
 #undef MEM_SIZE
-#define MEM_SIZE                        (9 * 1024)
+#define MEM_SIZE                        (6 * 1024)
 
 #undef MEM_ALIGNMENT
 #define MEM_ALIGNMENT                   4
@@ -115,7 +115,7 @@
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (6 * 1024)
+#define TCP_SND_BUF                     (2 * TCP_MSS)
 
 // TCP_WND have to be at least a couple of segments. It should be less than total pbup_pool_size
 #undef TCP_WND
@@ -186,11 +186,11 @@
 /* ---------- pbuf options ---------- */
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  3
+#define PBUF_POOL_SIZE                  4
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(3072)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(1536)
 
 /* ---------- netif options ---------- */
 #undef LWIP_NETIF_TX_SINGLE_PBUF
@@ -198,23 +198,23 @@
 
 /* ---------- ip options ---------- */
 #undef IP_REASS_MAX_PBUFS
-#define IP_REASS_MAX_PBUFS              3
+#define IP_REASS_MAX_PBUFS              4
 
 #undef MEMP_NUM_REASSDATA
 #define MEMP_NUM_REASSDATA              IP_REASS_MAX_PBUFS
 
 #undef IP_FRAG
-#define IP_FRAG                         0
+#define IP_FRAG                         1
 
 /* ---------- arp options ---------- */
 #undef ARP_QUEUEING
 #define ARP_QUEUEING                    1
 
 #undef ARP_QUEUE_LEN
-#define ARP_QUEUE_LEN                   3
+#define ARP_QUEUE_LEN                   2
 
 #undef MEMP_NUM_ARP_QUEUE
-#define MEMP_NUM_ARP_QUEUE              3
+#define MEMP_NUM_ARP_QUEUE              4
 
 /* ---------- napt options ---------- */
 // Memory usage at 512: Heap from 30136 to 17632: 12504
@@ -320,8 +320,8 @@ void dhcp_free_vendor_class_identifier(void);
 
 /* ---------- Statistics options ---------- */
 
-#define LWIP_STATS              0
-#define LWIP_STATS_DISPLAY      0
+#define LWIP_STATS              1
+#define LWIP_STATS_DISPLAY      1
 
 #if LWIP_STATS
 #define LINK_STATS              0
