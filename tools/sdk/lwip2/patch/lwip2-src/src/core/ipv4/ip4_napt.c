@@ -214,7 +214,7 @@ ip_napt_init(uint16_t max_nat)
 #endif
     ip_napt_max = max_nat;
 
-    ip_napt_table = (struct ip_napt_entry *) mem_calloc(max_nat, sizeof(*ip_napt_table));
+    ip_napt_table = (struct ip_napt_entry *) mem_clib_calloc(max_nat, sizeof(*ip_napt_table));
 #if IP_NAPT_PORTMAP
     ip_portmap_table = (struct ip_portmap_entry *) mem_calloc(max_portmap, sizeof(*ip_portmap_table));
     assert(ip_portmap_table != NULL && ip_napt_table != NULL);

@@ -1,0 +1,167 @@
+LWIP_IRAM_OPTIMIZATION:
+
+[] sockets:get_socket
+[] sockets:tryget_socket_unconn_locked
+[] sockets:done_socket
+[] sockets:lwip_recvfrom
+[] sockets:lwip_recv_tcp
+[] sockets:lwip_send
+[] sockets:lwip_sendto
+[] sockets:event_callback
+[] sockets:lwip_select
+[] sockets:tryget_socket_unconn
+[] sockets:tryget_socket
+[] sockets:lwip_recvfrom_udp_raw
+[] sockets:tryget_socket_unconn_nouse
+[] sockets:sock_inc_used
+[] sockets:lwip_recv_tcp_from
+[] sockets:select_check_waiters
+
+[] api_lib:netconn_recv_data
+[] api_lib:netconn_tcp_recvd
+[] api_lib:netconn_recv_data_tcp
+[] api_lib:netconn_recv_tcp_pbuf_flags
+[] api_lib:netconn_recv_udp_raw_netbuf_flags
+[] api_lib:netconn_recv
+[] api_lib:netconn_sendto
+[] api_lib:netconn_send
+[] api_lib:netconn_write_partly
+[] api_lib:netconn_write_vectors_partly
+[] api_lib:netconn_apimsg
+[] api_lib:netconn_tcp_recvd_msg
+[] api_msg:lwip_netconn_do_send
+[] api_msg:lwip_netconn_do_write
+[] api_msg:recv_udp
+
+[] netbuf:netbuf_alloc
+[] netbuf:netbuf_free
+
+[] tcpip:tcpip_thread
+[] tcpip:tcpip_inpkt
+[] tcpip:tcpip_input
+[] tcpip:tcpip_callback
+[] tcpip:tcpip_try_callback
+[] tcpip:tcpip_send_msg_wait_sem
+[] tcpip:tcpip_thread_handle_msg
+
+[] etharp:etharp_output_to_arp_index
+[] etharp:etharp_output
+
+[] ip4:ip4_route_src
+[] ip4:ip4_route
+[] ip4:ip4_input
+[] ip4:ip4_output_if
+[] ip4:ip4_output_if_opt
+[] ip4:ip4_output_if_src
+[] ip4:ip4_output_if_opt_src
+[] ip4:ip4_output
+[] ip4_addr:ip4_addr_isbroadcast_u32
+
+[] ip4_napt:checksumadjust
+[] ip4_napt:ip_napt_send_rst
+[] ip4_napt:ip_napt_insert
+[] ip4_napt:ip_napt_free
+[] ip4_napt:ip_napt_find_port
+[] ip4_napt:tcp_listening
+[] ip4_napt:udp_listening
+[] ip4_napt:ip_napt_new_port
+[] ip4_napt:ip_napt_find
+[] ip4_napt:ip_napt_add
+[] ip4_napt:ip_napt_recv
+[] ip4_napt:ip_napt_forward
+[] ip4_napt:ip_napt_gc
+[] ip4_napt:ip_napt_maint
+[] ip4_napt:ip_napt_tmr
+
+[] pbuf:pbuf_alloc
+[] pbuf:pbuf_add_header
+[] pbuf:pbuf_remove_header
+[] pbuf:pbuf_header
+[] pbuf:pbuf_free
+[] pbuf:pbuf_alloced_custom
+[] pbuf:pbuf_copy
+[] pbuf:pbuf_copy_partial_pbuf
+[] pbuf:pbuf_clone
+[] pbuf:pbuf_header_impl
+[] pbuf:pbuf_add_header_impl
+[] pbuf:pbuf_init_alloced_pbuf
+
+[] udp:udp_input_local_match
+[] udp:udp_input
+[] udp:udp_send
+[] udp:udp_sendto
+[] udp:udp_sendto_if
+[] udp:udp_sendto_if_src
+[] udp:udp_send_chksum
+[] udp:udp_sendto_chksum
+[] udp:udp_sendto_if_chksum
+[] udp:udp_sendto_if_src_chksum
+
+[] netif:ethernet:ethernet_input
+[] netif:ethernet:ethernet_output
+
+[] sys_arch:sys_mutex_lock
+[] sys_arch:sys_mutex_unlock
+[] sys_arch:sys_sem_signal
+[] sys_arch:sys_arch_sem_wait
+[] sys_arch:sys_mbox_post
+[] sys_arch:sys_mbox_trypost
+[] sys_arch:sys_arch_mbox_fetch
+[] sys_arch:sys_arch_protect
+[] sys_arch:sys_arch_unprotect
+[] sys_arch:sys_thread_tcpip
+
+[] inet_chksum:inet_chksum_pbuf
+[] inet_chksum:ip_chksum_pseudo
+[] inet_chksum:inet_chksum
+[] inet_chksum:lwip_standard_chksum
+[] inet_chksum:inet_cksum_pseudo_base
+[] inet_chksum:inet_chksum_pseudo
+[] inet_chksum:lwip_chksum_copy
+
+[] tcp:tcp_fasttmr
+[] tcp:tcp_tmr
+[] tcp:tcp_update_rcv_ann_wnd
+[] tcp:tcp_recved
+[] tcp:tcp_slowtmr
+[] tcp:tcp_process_refused_data
+[] tcp:tcp_segs_free
+[] tcp:tcp_seg_free
+[] tcp:tcp_seg_copy
+[] tcp:tcp_recv_null
+
+[] tcp_in:tcp_input
+[] tcp_in:tcp_input_delayed_close
+[] tcp_in:tcp_oos_insert_segment
+[] tcp_in:tcp_receive
+[] tcp_in:tcp_parseopt
+[] tcp_in:tcp_free_acked_segments
+[] tcp_in:tcp_process
+
+[] tcp_out:tcp_output_alloc_header_common
+[] tcp_out:tcp_route
+[] tcp_out:tcp_create_segment
+[] tcp_out:tcp_write
+[] tcp_out:tcp_split_unsent_seg
+[] tcp_out:tcp_rexmit_rto_prepare
+[] tcp_out:tcp_rexmit
+[] tcp_out:tcp_rexmit_fast
+[] tcp_out:tcp_output_control_segment_netif
+[] tcp_out:tcp_rst
+[] tcp_out:tcp_send_empty_ack
+[] tcp_out:tcp_seg_add_chksum
+[] tcp_out:tcp_output_segment
+[] tcp_out:tcp_output_fill_options
+[] tcp_out:tcp_output_alloc_header
+[] tcp_out:tcp_pbuf_prealloc
+[] tcp_out:tcp_write_checks
+
+[] mem:mem_malloc
+[] mem:mem_calloc
+[] memp:memp_malloc
+[] memp:do_memp_malloc_pool
+
+[] raw:raw_input
+[] raw:raw_input_local_match
+
+

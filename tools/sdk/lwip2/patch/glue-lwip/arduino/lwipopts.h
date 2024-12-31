@@ -6,74 +6,7 @@
 #ifndef MYLWIPOPTS_H
 #define MYLWIPOPTS_H
 
-/* opt.h version lwip-2.1.3 for esp8266 */
-
-/**
- * @file
- *
- * lwIP Options Configuration
- */
-
-/*
- * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *
- * This file is part of the lwIP TCP/IP stack.
- *
- * Author: Adam Dunkels <adam@sics.se>
- *
- */
-
-/*
- * NOTE: || defined __DOXYGEN__ is a workaround for doxygen bug -
- * without this, doxygen does not see the actual #define
- */
-
-/*
- * Include user defined options first. Anything not defined in these files
- * will be set to standard values. Override anything you don't like!
- */
-//#include "lwip/debug.h"      // done at end of this file
 #include "gluedebug.h"
-
-/**
- * @defgroup lwip_opts Options (lwipopts.h)
- * @ingroup lwip
- *
- * @defgroup lwip_opts_debug Debugging
- * @ingroup lwip_opts
- *
- * @defgroup lwip_opts_infrastructure Infrastructure
- * @ingroup lwip_opts
- *
- * @defgroup lwip_opts_callback Callback-style APIs
- * @ingroup lwip_opts
- *
- * @defgroup lwip_opts_threadsafe_apis Thread-safe APIs
- * @ingroup lwip_opts
- */
 
  /*
    ---------------------------------------------------
@@ -94,7 +27,7 @@
 
 /* ---------- memory options ---------- */
 #undef MEM_LIBC_MALLOC
-#define MEM_LIBC_MALLOC                 1
+#define MEM_LIBC_MALLOC                 0
 
 #undef MEM_SANITY_CHECK
 #define MEM_SANITY_CHECK                0
@@ -102,9 +35,19 @@
 #undef MEM_OVERFLOW_CHECK
 #define MEM_OVERFLOW_CHECK              0
 
+#undef MEM_USE_POOLS
+#define MEM_USE_POOLS                   1
+
+#undef MEM_USE_POOLS_TRY_BIGGER_POOL
+#define MEM_USE_POOLS_TRY_BIGGER_POOL   0
+
+#undef MEMP_USE_CUSTOM_POOLS
+#define MEMP_USE_CUSTOM_POOLS           1
+
+
 // MEM_SIZE: the size of the heap memory. This is a statically allocated block.
 #undef MEM_SIZE
-#define MEM_SIZE                        (6 * 1024)
+#define MEM_SIZE                        0
 
 #undef MEM_ALIGNMENT
 #define MEM_ALIGNMENT                   4
@@ -113,24 +56,40 @@
 #undef TCP_MSS                         
 #define TCP_MSS                         1460
 
+/**
+ * TCP_OVERSIZE: The maximum number of bytes that tcp_write may
+ * allocate ahead of time in an attempt to create shorter pbuf chains
+ * for transmission. The meaningful range is 0 to TCP_MSS. Some
+ * suggested values are:
+ *
+ * 0:         Disable oversized allocation. Each tcp_write() allocates a new
+              pbuf (old behaviour).
+ * 1:         Allocate size-aligned pbufs with minimal excess. Use this if your
+ *            scatter-gather DMA requires aligned fragments.
+ * 128:       Limit the pbuf/memory overhead to 20%.
+ * TCP_MSS:   Try to create unfragmented TCP packets.
+ * TCP_MSS/4: Try to create 4 fragments or less per TCP packet.
+ */
+#undef TCP_OVERSIZE
+#define TCP_OVERSIZE                    TCP_MSS
+
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (2 * TCP_MSS)
+#define TCP_SND_BUF                     (20*1024)
 
 // TCP_WND have to be at least a couple of segments. It should be less than total pbup_pool_size
 #undef TCP_WND
 #define TCP_WND                         TCP_SND_BUF
 
 #undef LWIP_WND_SCALE
-#define LWIP_WND_SCALE                  1
+#define LWIP_WND_SCALE                  0
 
 #undef TCP_RCV_SCALE
 #define TCP_RCV_SCALE                   0
 
 // must be less than 256 
-// TCP_SND_QUEUELEN == 8 says that at maximum, 8 pbufs will be queued for sending per TCP pcb
 #undef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                2
+#define TCP_SND_QUEUELEN                12
 
 #undef LWIP_DISABLE_TCP_SANITY_CHECKS
 #define LWIP_DISABLE_TCP_SANITY_CHECKS  1
@@ -162,35 +121,35 @@
    sends a lot of data out of ROM (or other static memory), this
    should be set high (>1024). */
 #undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   4 
+#define MEMP_NUM_PBUF                   6 
 
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
 #undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                4
+#define MEMP_NUM_TCP_PCB                6
 
 #undef MEMP_NUM_TCP_PCB_LISTEN
 #define MEMP_NUM_TCP_PCB_LISTEN         2 
 
 #undef MEMP_NUM_UDP_PCB
-#define MEMP_NUM_UDP_PCB                4
+#define MEMP_NUM_UDP_PCB                6
 
 #undef MEMP_NUM_RAW_PCB
-#define MEMP_NUM_RAW_PCB                4
+#define MEMP_NUM_RAW_PCB                6
 
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. (2 * TCP_SND_QUEUELEN) */
 #undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                4
+#define MEMP_NUM_TCP_SEG                (TCP_SND_QUEUELEN * 2)
 
 /* ---------- pbuf options ---------- */
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  4
+#define PBUF_POOL_SIZE                  0
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(1536)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(1600)
 
 /* ---------- netif options ---------- */
 #undef LWIP_NETIF_TX_SINGLE_PBUF
@@ -198,7 +157,7 @@
 
 /* ---------- ip options ---------- */
 #undef IP_REASS_MAX_PBUFS
-#define IP_REASS_MAX_PBUFS              4
+#define IP_REASS_MAX_PBUFS              6
 
 #undef MEMP_NUM_REASSDATA
 #define MEMP_NUM_REASSDATA              IP_REASS_MAX_PBUFS
@@ -214,7 +173,7 @@
 #define ARP_QUEUE_LEN                   2
 
 #undef MEMP_NUM_ARP_QUEUE
-#define MEMP_NUM_ARP_QUEUE              4
+#define MEMP_NUM_ARP_QUEUE              6
 
 /* ---------- napt options ---------- */
 // Memory usage at 512: Heap from 30136 to 17632: 12504
@@ -242,13 +201,13 @@
 #define ESP_LWIP_MLD6_TIMERS_ONDEMAND           ESP_LWIP
 #define ESP_DNS                                 ESP_LWIP
 #define ESP_LWIP_ARP                            ESP_LWIP
-#define LWIP_MDNS_RESPONDER                     1
+#define LWIP_MDNS_RESPONDER                     0
 #define MEMP_NUM_SYS_TIMEOUT                    (LWIP_NUM_SYS_TIMEOUT_INTERNAL + 8)
 #define LWIP_AUTOIP_MAX_CONFLICTS               10
 #define LWIP_AUTOIP_RATE_LIMIT_INTERVAL         60
 #define DNS_FALLBACK_SERVER_INDEX               (DNS_MAX_SERVERS - 1)
 #define LWIP_NUM_NETIF_CLIENT_DATA              (LWIP_MDNS_RESPONDER)
-#define LWIP_TCP_RTO_TIME                       3000
+#define LWIP_TCP_RTO_TIME                       1500
 
 /* esp-lwip DHCP options*/
 #define LWIP_DHCP_ENABLE_VENDOR_SPEC_IDS        1
@@ -333,7 +292,7 @@ void dhcp_free_vendor_class_identifier(void);
 #define TCP_STATS               0
 #define MEM_STATS               1
 #define MEMP_STATS              1
-#define PBUF_STATS              1
+#define PBUF_STATS              0
 #define SYS_STATS               0
 #define IP_NAPT_STATS           1
 #endif /* LWIP_STATS */
@@ -632,34 +591,6 @@ void dhcp_free_vendor_class_identifier(void);
 #endif
 
 /**
- * MEM_USE_POOLS==1: Use an alternative to malloc() by allocating from a set
- * of memory pools of various sizes. When mem_malloc is called, an element of
- * the smallest pool that can provide the length needed is returned.
- * To use this, MEMP_USE_CUSTOM_POOLS also has to be enabled.
- */
-#if !defined MEM_USE_POOLS || defined __DOXYGEN__
-#define MEM_USE_POOLS                   0
-#endif
-
-/**
- * MEM_USE_POOLS_TRY_BIGGER_POOL==1: if one malloc-pool is empty, try the next
- * bigger pool - WARNING: THIS MIGHT WASTE MEMORY but it can make a system more
- * reliable. */
-#if !defined MEM_USE_POOLS_TRY_BIGGER_POOL || defined __DOXYGEN__
-#define MEM_USE_POOLS_TRY_BIGGER_POOL   0
-#endif
-
-/**
- * MEMP_USE_CUSTOM_POOLS==1: whether to include a user file lwippools.h
- * that defines additional pools beyond the "standard" ones required
- * by lwIP. If you set this to 1, you must have lwippools.h in your
- * include path somewhere.
- */
-#if !defined MEMP_USE_CUSTOM_POOLS || defined __DOXYGEN__
-#define MEMP_USE_CUSTOM_POOLS           0
-#endif
-
-/**
  * Set this to 1 if you want to free PBUF_RAM pbufs (or call mem_free()) from
  * interrupt context (or another context that doesn't allow waiting for a
  * semaphore).
@@ -790,7 +721,7 @@ void dhcp_free_vendor_class_identifier(void);
  * (requires the LWIP_IGMP option)
  */
 #if !defined MEMP_NUM_IGMP_GROUP || defined __DOXYGEN__
-#define MEMP_NUM_IGMP_GROUP             8
+#define MEMP_NUM_IGMP_GROUP             6
 #endif
 
 /**
@@ -1387,12 +1318,12 @@ void dhcp_free_vendor_class_identifier(void);
 
 /** DNS maximum number of entries to maintain locally. */
 #if !defined DNS_TABLE_SIZE || defined __DOXYGEN__
-#define DNS_TABLE_SIZE                  3 // 4
+#define DNS_TABLE_SIZE                  4
 #endif
 
 /** DNS maximum host name length supported in the name table. */
 #if !defined DNS_MAX_NAME_LENGTH || defined __DOXYGEN__
-#define DNS_MAX_NAME_LENGTH             128 // 256
+#define DNS_MAX_NAME_LENGTH             256
 #endif
 
 /** The maximum of DNS servers
@@ -1540,7 +1471,7 @@ void dhcp_free_vendor_class_identifier(void);
  * TCP_SYNMAXRTX: Maximum number of retransmissions of SYN segments.
  */
 #if !defined TCP_SYNMAXRTX || defined __DOXYGEN__
-#define TCP_SYNMAXRTX                   6
+#define TCP_SYNMAXRTX                   12
 #endif
 
 /**
@@ -1693,24 +1624,6 @@ void dhcp_free_vendor_class_identifier(void);
 #endif
 
 /**
- * TCP_OVERSIZE: The maximum number of bytes that tcp_write may
- * allocate ahead of time in an attempt to create shorter pbuf chains
- * for transmission. The meaningful range is 0 to TCP_MSS. Some
- * suggested values are:
- *
- * 0:         Disable oversized allocation. Each tcp_write() allocates a new
-              pbuf (old behaviour).
- * 1:         Allocate size-aligned pbufs with minimal excess. Use this if your
- *            scatter-gather DMA requires aligned fragments.
- * 128:       Limit the pbuf/memory overhead to 20%.
- * TCP_MSS:   Try to create unfragmented TCP packets.
- * TCP_MSS/4: Try to create 4 fragments or less per TCP packet.
- */
-#if !defined TCP_OVERSIZE || defined __DOXYGEN__
-#define TCP_OVERSIZE                    TCP_MSS // TCP_MSS required for esp8266
-#endif
-
-/**
  * LWIP_TCP_TIMESTAMPS==1: support the TCP timestamp option.
  * The timestamp option is currently only used to help remote hosts, it is not
  * really used locally. Therefore, it is only enabled when a TS option is
@@ -1718,14 +1631,6 @@ void dhcp_free_vendor_class_identifier(void);
  */
 #if !defined LWIP_TCP_TIMESTAMPS || defined __DOXYGEN__
 #define LWIP_TCP_TIMESTAMPS             0
-#endif
-
-/**
- * TCP_WND_UPDATE_THRESHOLD: difference in window to trigger an
- * explicit window update
- */
-#if !defined TCP_WND_UPDATE_THRESHOLD || defined __DOXYGEN__
-#define TCP_WND_UPDATE_THRESHOLD        LWIP_MIN((TCP_WND / 4), (TCP_MSS * 4))
 #endif
 
 /**
