@@ -44,8 +44,8 @@ LWIP_IRAM_OPTIMIZATION:
 [] tcpip:tcpip_send_msg_wait_sem
 [] tcpip:tcpip_thread_handle_msg
 
-[] etharp:etharp_output_to_arp_index
-[] etharp:etharp_output
+[x] etharp:etharp_output_to_arp_index
+[x] etharp:etharp_output
 
 [] ip4:ip4_route_src
 [] ip4:ip4_route
@@ -97,8 +97,8 @@ LWIP_IRAM_OPTIMIZATION:
 [x] udp:udp_sendto_if_chksum
 [x] udp:udp_sendto_if_src_chksum
 
-[] netif:ethernet:ethernet_input
-[] netif:ethernet:ethernet_output
+[x] netif:ethernet:ethernet_input
+[x] netif:ethernet:ethernet_output
 
 [] sys_arch:sys_mutex_lock
 [] sys_arch:sys_mutex_unlock

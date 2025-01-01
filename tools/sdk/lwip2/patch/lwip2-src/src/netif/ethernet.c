@@ -77,7 +77,7 @@ const struct eth_addr ethzero = {{0, 0, 0, 0, 0, 0}};
  * @see ETHARP_SUPPORT_VLAN
  * @see LWIP_HOOK_VLAN_CHECK
  */
-err_t
+IRAM_ATTR err_t
 ethernet_input(struct pbuf *p, struct netif *netif)
 {
   struct eth_hdr *ethhdr;
@@ -266,7 +266,7 @@ free_and_return:
  * @param eth_type ethernet type (@ref lwip_ieee_eth_type)
  * @return ERR_OK if the packet was sent, any other err_t on failure
  */
-err_t
+IRAM_ATTR err_t
 ethernet_output(struct netif * netif, struct pbuf * p,
                 const struct eth_addr * src, const struct eth_addr * dst,
                 u16_t eth_type) {

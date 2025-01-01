@@ -78,7 +78,7 @@ void etharp_tmr(void);
 ssize_t etharp_find_addr(struct netif *netif, const ip4_addr_t *ipaddr,
          struct eth_addr **eth_ret, const ip4_addr_t **ip_ret);
 int etharp_get_entry(size_t i, ip4_addr_t **ipaddr, struct netif **netif, struct eth_addr **eth_ret);
-err_t etharp_output(struct netif *netif, struct pbuf *q, const ip4_addr_t *ipaddr);
+IRAM_ATTR err_t etharp_output(struct netif *netif, struct pbuf *q, const ip4_addr_t *ipaddr);
 err_t etharp_query(struct netif *netif, const ip4_addr_t *ipaddr, struct pbuf *q);
 err_t etharp_request(struct netif *netif, const ip4_addr_t *ipaddr);
 /** For Ethernet network interfaces, we might want to send "gratuitous ARP";
