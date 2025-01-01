@@ -138,16 +138,16 @@ err_t            udp_sendto     (struct udp_pcb *pcb, struct pbuf *p,
 err_t            udp_send       (struct udp_pcb *pcb, struct pbuf *p);
 
 #if LWIP_CHECKSUM_ON_COPY && CHECKSUM_GEN_UDP
-err_t            udp_sendto_if_chksum(struct udp_pcb *pcb, struct pbuf *p,
+IRAM_ATTR err_t            udp_sendto_if_chksum(struct udp_pcb *pcb, struct pbuf *p,
                                  const ip_addr_t *dst_ip, u16_t dst_port,
                                  struct netif *netif, u8_t have_chksum,
                                  u16_t chksum);
-err_t            udp_sendto_chksum(struct udp_pcb *pcb, struct pbuf *p,
+IRAM_ATTR err_t            udp_sendto_chksum(struct udp_pcb *pcb, struct pbuf *p,
                                  const ip_addr_t *dst_ip, u16_t dst_port,
                                  u8_t have_chksum, u16_t chksum);
-err_t            udp_send_chksum(struct udp_pcb *pcb, struct pbuf *p,
+IRAM_ATTR err_t            udp_send_chksum(struct udp_pcb *pcb, struct pbuf *p,
                                  u8_t have_chksum, u16_t chksum);
-err_t            udp_sendto_if_src_chksum(struct udp_pcb *pcb, struct pbuf *p,
+IRAM_ATTR err_t            udp_sendto_if_src_chksum(struct udp_pcb *pcb, struct pbuf *p,
                                  const ip_addr_t *dst_ip, u16_t dst_port, struct netif *netif,
                                  u8_t have_chksum, u16_t chksum, const ip_addr_t *src_ip);
 #endif /* LWIP_CHECKSUM_ON_COPY && CHECKSUM_GEN_UDP */

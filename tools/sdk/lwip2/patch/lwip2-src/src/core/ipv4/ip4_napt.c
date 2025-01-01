@@ -214,7 +214,7 @@ ip_napt_init(uint16_t max_nat)
 #endif
     ip_napt_max = max_nat;
 
-    ip_napt_table = (struct ip_napt_entry *) mem_clib_calloc(max_nat, sizeof(*ip_napt_table));
+    ip_napt_table = (struct ip_napt_entry *) calloc(max_nat, sizeof(*ip_napt_table));
 #if IP_NAPT_PORTMAP
     ip_portmap_table = (struct ip_portmap_entry *) mem_calloc(max_portmap, sizeof(*ip_portmap_table));
     assert(ip_portmap_table != NULL && ip_napt_table != NULL);
@@ -314,7 +314,7 @@ ip_napt_enable_netif(struct netif *netif, int enable)
 - optr points to the old data in the packet (before)
 - nptr points to the new data in the packet (after)
 */
-static void
+IRAM_ATTR static void
 checksumadjust(u8_t *chksum, u8_t *optr, int olen, u8_t *nptr, int nlen)
 {
   s32_t x, before, after;

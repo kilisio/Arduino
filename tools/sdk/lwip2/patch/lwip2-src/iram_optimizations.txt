@@ -57,7 +57,7 @@ LWIP_IRAM_OPTIMIZATION:
 [] ip4:ip4_output
 [] ip4_addr:ip4_addr_isbroadcast_u32
 
-[] ip4_napt:checksumadjust
+[x] ip4_napt:checksumadjust
 [] ip4_napt:ip_napt_send_rst
 [] ip4_napt:ip_napt_insert
 [] ip4_napt:ip_napt_free
@@ -92,10 +92,10 @@ LWIP_IRAM_OPTIMIZATION:
 [] udp:udp_sendto
 [] udp:udp_sendto_if
 [] udp:udp_sendto_if_src
-[] udp:udp_send_chksum
-[] udp:udp_sendto_chksum
-[] udp:udp_sendto_if_chksum
-[] udp:udp_sendto_if_src_chksum
+[x] udp:udp_send_chksum
+[x] udp:udp_sendto_chksum
+[x] udp:udp_sendto_if_chksum
+[x] udp:udp_sendto_if_src_chksum
 
 [] netif:ethernet:ethernet_input
 [] netif:ethernet:ethernet_output
@@ -111,13 +111,13 @@ LWIP_IRAM_OPTIMIZATION:
 [] sys_arch:sys_arch_unprotect
 [] sys_arch:sys_thread_tcpip
 
-[] inet_chksum:inet_chksum_pbuf
-[] inet_chksum:ip_chksum_pseudo
-[] inet_chksum:inet_chksum
-[] inet_chksum:lwip_standard_chksum
-[] inet_chksum:inet_cksum_pseudo_base
-[] inet_chksum:inet_chksum_pseudo
-[] inet_chksum:lwip_chksum_copy
+[x] inet_chksum:inet_chksum_pbuf
+[x] inet_chksum:ip_chksum_pseudo
+[x] inet_chksum:inet_chksum
+[x] inet_chksum:lwip_standard_chksum
+[x] inet_chksum:inet_cksum_pseudo_base
+[x] inet_chksum:inet_chksum_pseudo
+[x] inet_chksum:lwip_chksum_copy
 
 [] tcp:tcp_fasttmr
 [] tcp:tcp_tmr
@@ -149,7 +149,7 @@ LWIP_IRAM_OPTIMIZATION:
 [] tcp_out:tcp_output_control_segment_netif
 [] tcp_out:tcp_rst
 [] tcp_out:tcp_send_empty_ack
-[] tcp_out:tcp_seg_add_chksum
+[x] tcp_out:tcp_seg_add_chksum
 [] tcp_out:tcp_output_segment
 [] tcp_out:tcp_output_fill_options
 [] tcp_out:tcp_output_alloc_header
