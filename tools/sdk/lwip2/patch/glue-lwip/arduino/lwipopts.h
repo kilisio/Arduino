@@ -54,7 +54,7 @@
 
 /* ---------- tcp options ---------- */
 #undef TCP_MSS                         
-#define TCP_MSS                         1460
+#define TCP_MSS                         1452
 
 /**
  * TCP_OVERSIZE: The maximum number of bytes that tcp_write may
