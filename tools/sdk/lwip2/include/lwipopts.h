@@ -59,7 +59,7 @@
 
 /* ---------- tcp options ---------- */
 #undef TCP_MSS                         
-#define TCP_MSS                         1452
+#define TCP_MSS                         1460
 
 /**
  * TCP_OVERSIZE: The maximum number of bytes that tcp_write may
@@ -76,11 +76,11 @@
  * TCP_MSS/4: Try to create 4 fragments or less per TCP packet.
  */
 #undef TCP_OVERSIZE
-#define TCP_OVERSIZE                    TCP_MSS
+#define TCP_OVERSIZE                    TCP_MSS 
 
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (20*1024)
+#define TCP_SND_BUF                     (22 * 1024)
 
 // TCP_WND have to be at least a couple of segments. It should be less than total pbup_pool_size
 #undef TCP_WND
@@ -108,7 +108,7 @@
 
 /* ---------- udp options ---------- */
 #undef LWIP_UDPLITE
-#define LWIP_UDPLITE                    0
+#define LWIP_UDPLITE                    1
 
 /* ---------- memp options ---------- */
 // determines whether malloc memory is dynamically or statically allocated 
@@ -268,16 +268,16 @@ void dhcp_free_vendor_class_identifier(void);
 #define LWIP_CHECKSUM_CTRL_PER_NETIF      1
 #define LWIP_CHECKSUM_ON_COPY             1
 #define TCP_CHECKSUM_ON_COPY_SANITY_CHECK 0
-#define LWIP_CHKSUM_ALGORITHM             3 // 2
+#define LWIP_CHKSUM_ALGORITHM             3
 
 #define CHECKSUM_GEN_IP                   1
-#define CHECKSUM_GEN_UDP                  1
+#define CHECKSUM_GEN_UDP                  0
 #define CHECKSUM_GEN_TCP                  1
 #define CHECKSUM_GEN_ICMP                 1
 #define CHECKSUM_GEN_ICMP6                1
 
 #define CHECKSUM_CHECK_IP                 1
-#define CHECKSUM_CHECK_UDP                1
+#define CHECKSUM_CHECK_UDP                0
 #define CHECKSUM_CHECK_TCP                1
 #define CHECKSUM_CHECK_ICMP               1
 #define CHECKSUM_CHECK_ICMP6              1
@@ -1476,7 +1476,7 @@ void dhcp_free_vendor_class_identifier(void);
  * TCP_SYNMAXRTX: Maximum number of retransmissions of SYN segments.
  */
 #if !defined TCP_SYNMAXRTX || defined __DOXYGEN__
-#define TCP_SYNMAXRTX                   12
+#define TCP_SYNMAXRTX                   6
 #endif
 
 /**
