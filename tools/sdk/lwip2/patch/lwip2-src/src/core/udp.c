@@ -481,7 +481,7 @@ udp_send(struct udp_pcb *pcb, struct pbuf *p)
 /** @ingroup udp_raw
  * Same as udp_send() but with checksum
  */
-IRAM_ATTR err_t
+err_t
 udp_send_chksum(struct udp_pcb *pcb, struct pbuf *p,
                 u8_t have_chksum, u16_t chksum)
 {
@@ -526,7 +526,7 @@ udp_sendto(struct udp_pcb *pcb, struct pbuf *p,
 
 /** @ingroup udp_raw
  * Same as udp_sendto(), but with checksum */
-IRAM_ATTR err_t
+err_t
 udp_sendto_chksum(struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *dst_ip,
                   u16_t dst_port, u8_t have_chksum, u16_t chksum)
 {
@@ -641,7 +641,7 @@ udp_sendto_if(struct udp_pcb *pcb, struct pbuf *p,
 }
 
 /** Same as udp_sendto_if(), but with checksum */
-IRAM_ATTR err_t
+err_t
 udp_sendto_if_chksum(struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *dst_ip,
                      u16_t dst_port, struct netif *netif, u8_t have_chksum,
                      u16_t chksum)
@@ -716,7 +716,7 @@ udp_sendto_if_src(struct udp_pcb *pcb, struct pbuf *p,
 }
 
 /** Same as udp_sendto_if_src(), but with checksum */
-IRAM_ATTR err_t
+err_t
 udp_sendto_if_src_chksum(struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *dst_ip,
                          u16_t dst_port, struct netif *netif, u8_t have_chksum,
                          u16_t chksum, const ip_addr_t *src_ip)

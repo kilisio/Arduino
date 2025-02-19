@@ -92,10 +92,10 @@ LWIP_IRAM_OPTIMIZATION:
 [] udp:udp_sendto
 [] udp:udp_sendto_if
 [] udp:udp_sendto_if_src
-[x] udp:udp_send_chksum
-[x] udp:udp_sendto_chksum
-[x] udp:udp_sendto_if_chksum
-[x] udp:udp_sendto_if_src_chksum
+[] udp:udp_send_chksum
+[] udp:udp_sendto_chksum
+[] udp:udp_sendto_if_chksum
+[] udp:udp_sendto_if_src_chksum
 
 [x] netif:ethernet:ethernet_input
 [x] netif:ethernet:ethernet_output
