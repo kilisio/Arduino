@@ -339,7 +339,7 @@ checksumadjust(u8_t *chksum, u8_t *optr, int olen, u8_t *nptr, int nlen)
 }
 
 
-static void
+IRAM_ATTR static void
 ip_napt_send_rst(u32_t src_be, u16_t sport_be, u32_t dst_be, u16_t dport_be, u32_t seqno_le, u32_t ackno_le)
 {
   struct pbuf *p = pbuf_alloc(PBUF_IP, TCP_HLEN, PBUF_RAM);
@@ -371,7 +371,7 @@ ip_napt_send_rst(u32_t src_be, u16_t sport_be, u32_t dst_be, u16_t dport_be, u32
 }
 
 /* t must be indexed by napt_free */
-static void
+IRAM_ATTR static void
 ip_napt_insert(struct ip_napt_entry *t)
 {
   u16_t ti = t - ip_napt_table;
@@ -403,7 +403,7 @@ ip_napt_insert(struct ip_napt_entry *t)
 #endif /* LWIP_STATS */
 }
 
-static void
+IRAM_ATTR static void
 ip_napt_free(struct ip_napt_entry *t)
 {
   u16_t ti = t - ip_napt_table;
@@ -447,7 +447,7 @@ ip_napt_free(struct ip_napt_entry *t)
 }
 
 #if LWIP_TCP
-static u8_t
+IRAM_ATTR static u8_t
 ip_napt_find_port(u8_t proto, u16_t port)
 {
   int i, next;
@@ -465,7 +465,7 @@ static struct ip_portmap_entry *
 ip_portmap_find(u8_t proto, u16_t mport);
 #endif
 
-static u8_t
+IRAM_ATTR static u8_t
 tcp_listening(u16_t port)
 {
   struct tcp_pcb_listen *t;
@@ -481,7 +481,7 @@ tcp_listening(u16_t port)
 #endif /* LWIP_TCP */
 
 #if LWIP_UDP
-static u8_t
+IRAM_ATTR static u8_t
 udp_listening(u16_t port)
 {
   struct udp_pcb *pcb;
@@ -496,7 +496,7 @@ udp_listening(u16_t port)
 }
 #endif /* LWIP_UDP */
 
-static u16_t
+IRAM_ATTR static u16_t
 ip_napt_new_port(u8_t proto, u16_t port)
 {
   if (PP_NTOHS(port) >= IP_NAPT_PORT_RANGE_START && PP_NTOHS(port) <= IP_NAPT_PORT_RANGE_END)
@@ -520,7 +520,7 @@ ip_napt_new_port(u8_t proto, u16_t port)
   }
 }
 
-static struct ip_napt_entry*
+IRAM_ATTR static struct ip_napt_entry*
 ip_napt_find(u8_t proto, u32_t addr, u16_t port, u16_t mport, u8_t dest)
 {
   u16_t i, next;
@@ -559,7 +559,7 @@ ip_napt_find(u8_t proto, u32_t addr, u16_t port, u16_t mport, u8_t dest)
   return NULL;
 }
 
-static u16_t
+IRAM_ATTR static u16_t
 ip_napt_add(u8_t proto, u32_t src, u16_t sport, u32_t dest, u16_t dport, u32_t seqno)
 {
   struct ip_napt_entry *t = ip_napt_find(proto, src, sport, 0, 0);
@@ -747,7 +747,7 @@ ip_napt_modify_addr(struct ip_hdr *iphdr, ip4_addr_p_t *field, u32_t newval)
   field->addr = newval;
 }
 
-void
+IRAM_ATTR void
 ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr)
 {
 #if IP_NAPT_PORTMAP
@@ -854,7 +854,7 @@ ip_napt_recv(struct pbuf *p, struct ip_hdr *iphdr)
 #endif /* LWIP_UDP */
 }
 
-err_t
+IRAM_ATTR err_t
 ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct netif *outp)
 {
   if (!inp->napt)
@@ -979,7 +979,7 @@ ip_napt_forward(struct pbuf *p, struct ip_hdr *iphdr, struct netif *inp, struct 
   return ERR_OK;
 }
 
-static void
+IRAM_ATTR static void
 ip_napt_gc(uint32_t now, bool force)
 {
   u16_t i, next, oldest = NO_IDX;
@@ -1038,7 +1038,7 @@ ip_napt_gc(uint32_t now, bool force)
                            force, checked, evicted, forced, oldest_age));
 }
 
-static void
+IRAM_ATTR static void
 ip_napt_maint(void)
 {
   static uint32_t s_last_now = 0;
@@ -1060,7 +1060,7 @@ ip_napt_maint(void)
   s_last_now = now;
 }
 
-static void
+IRAM_ATTR static void
 ip_napt_tmr(void *arg)
 {
   ip_napt_maint();

@@ -58,20 +58,20 @@ LWIP_IRAM_OPTIMIZATION:
 [] ip4_addr:ip4_addr_isbroadcast_u32
 
 [x] ip4_napt:checksumadjust
-[] ip4_napt:ip_napt_send_rst
-[] ip4_napt:ip_napt_insert
-[] ip4_napt:ip_napt_free
-[] ip4_napt:ip_napt_find_port
-[] ip4_napt:tcp_listening
-[] ip4_napt:udp_listening
-[] ip4_napt:ip_napt_new_port
-[] ip4_napt:ip_napt_find
-[] ip4_napt:ip_napt_add
-[] ip4_napt:ip_napt_recv
-[] ip4_napt:ip_napt_forward
-[] ip4_napt:ip_napt_gc
-[] ip4_napt:ip_napt_maint
-[] ip4_napt:ip_napt_tmr
+[x] ip4_napt:ip_napt_send_rst
+[x] ip4_napt:ip_napt_insert
+[x] ip4_napt:ip_napt_free
+[x] ip4_napt:ip_napt_find_port
+[x] ip4_napt:tcp_listening
+[x] ip4_napt:udp_listening
+[x] ip4_napt:ip_napt_new_port
+[x] ip4_napt:ip_napt_find
+[x] ip4_napt:ip_napt_add
+[x] ip4_napt:ip_napt_recv
+[x] ip4_napt:ip_napt_forward
+[x] ip4_napt:ip_napt_gc
+[x] ip4_napt:ip_napt_maint
+[x] ip4_napt:ip_napt_tmr
 
 [] pbuf:pbuf_alloc
 [] pbuf:pbuf_add_header
