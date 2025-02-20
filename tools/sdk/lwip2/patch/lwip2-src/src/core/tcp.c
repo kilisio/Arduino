@@ -230,7 +230,7 @@ tcp_free_listen(struct tcp_pcb *pcb)
 /**
  * Called periodically to dispatch TCP timers.
  */
-void
+IRAM_ATTR void
 tcp_tmr(void)
 {
   /* Call tcp_fasttmr() every 250 ms */
@@ -1195,7 +1195,7 @@ tcp_connect(struct tcp_pcb *pcb, const ip_addr_t *ipaddr, u16_t port,
  *
  * Automatically called from tcp_tmr().
  */
-void
+IRAM_ATTR void
 tcp_slowtmr(void)
 {
   struct tcp_pcb *pcb, *prev;
@@ -1486,7 +1486,7 @@ tcp_slowtmr_start:
  *
  * Automatically called from tcp_tmr().
  */
-void
+IRAM_ATTR void
 tcp_fasttmr(void)
 {
   struct tcp_pcb *pcb;

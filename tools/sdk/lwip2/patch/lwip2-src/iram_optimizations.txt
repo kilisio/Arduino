@@ -119,11 +119,11 @@ LWIP_IRAM_OPTIMIZATION:
 [x] inet_chksum:inet_chksum_pseudo
 [x] inet_chksum:lwip_chksum_copy
 
-[] tcp:tcp_fasttmr
-[] tcp:tcp_tmr
+[x] tcp:tcp_fasttmr
+[x] tcp:tcp_tmr
 [] tcp:tcp_update_rcv_ann_wnd
 [] tcp:tcp_recved
-[] tcp:tcp_slowtmr
+[x] tcp:tcp_slowtmr
 [] tcp:tcp_process_refused_data
 [] tcp:tcp_segs_free
 [] tcp:tcp_seg_free
