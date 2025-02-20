@@ -496,7 +496,7 @@ udp_listening(u16_t port)
 }
 #endif /* LWIP_UDP */
 
-IRAM_ATTR static u16_t
+static u16_t
 ip_napt_new_port(u8_t proto, u16_t port)
 {
   if (PP_NTOHS(port) >= IP_NAPT_PORT_RANGE_START && PP_NTOHS(port) <= IP_NAPT_PORT_RANGE_END)

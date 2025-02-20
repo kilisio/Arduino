@@ -279,7 +279,7 @@ tcp_pbuf_prealloc(pbuf_layer layer, u16_t length, u16_t max_length,
  *
  * Called by tcp_write and tcp_split_unsent_seg.
  */
-IRAM_ATTR static void
+static void
 tcp_seg_add_chksum(u16_t chksum, u16_t len, u16_t *seg_chksum,
                    u8_t *seg_chksum_swapped)
 {
