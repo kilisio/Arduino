@@ -11,74 +11,7 @@
 #ifndef MYLWIPOPTS_H
 #define MYLWIPOPTS_H
 
-/* opt.h version lwip-2.1.3 for esp8266 */
-
-/**
- * @file
- *
- * lwIP Options Configuration
- */
-
-/*
- * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *
- * This file is part of the lwIP TCP/IP stack.
- *
- * Author: Adam Dunkels <adam@sics.se>
- *
- */
-
-/*
- * NOTE: || defined __DOXYGEN__ is a workaround for doxygen bug -
- * without this, doxygen does not see the actual #define
- */
-
-/*
- * Include user defined options first. Anything not defined in these files
- * will be set to standard values. Override anything you don't like!
- */
-//#include "lwip/debug.h"      // done at end of this file
 #include "gluedebug.h"
-
-/**
- * @defgroup lwip_opts Options (lwipopts.h)
- * @ingroup lwip
- *
- * @defgroup lwip_opts_debug Debugging
- * @ingroup lwip_opts
- *
- * @defgroup lwip_opts_infrastructure Infrastructure
- * @ingroup lwip_opts
- *
- * @defgroup lwip_opts_callback Callback-style APIs
- * @ingroup lwip_opts
- *
- * @defgroup lwip_opts_threadsafe_apis Thread-safe APIs
- * @ingroup lwip_opts
- */
 
  /*
    ---------------------------------------------------
@@ -86,52 +19,20 @@
    ---------------------------------------------------
 */
 #undef NO_SYS
-#define NO_SYS                          1 // 0
+#define NO_SYS                          1 
 
 #undef LWIP_FEATURES
 #define LWIP_FEATURES                   1
 
+#undef LWIP_RAW
+#define LWIP_RAW                        1
+
+#undef LWIP_IPV6
+#define LWIP_IPV6                       0
+
+/* ---------- memory options ---------- */
 #undef MEM_LIBC_MALLOC
 #define MEM_LIBC_MALLOC                 1
-
-#undef MEMP_MEM_MALLOC
-#define MEMP_MEM_MALLOC		            	1
-
-#undef MEM_ALIGNMENT
-#define MEM_ALIGNMENT                   4 // 1
-
-#undef MEM_USE_POOLS
-#define MEM_USE_POOLS                   0
-
-#undef MEMP_USE_CUSTOM_POOLS
-#define MEMP_USE_CUSTOM_POOLS           0
-
-// MEM_SIZE: the size of the heap memory. This is a statically allocated block. Empirically this needs to be big enough for at least 4 x PBUF_POOL_BUFSIZE.
-#undef MEM_SIZE
-#define MEM_SIZE                        (32 * 1024)
-
-#undef TCP_MSS                         
-#define TCP_MSS                         1460
-
-// should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
-#undef TCP_SND_BUF
-#define TCP_SND_BUF                     (4 * 1024)
-
-// TCP_WND have to be at least a couple of segments ("lwip connect to normal socket applicationveryvery slowly" thread). It has to be big enough to avoid/reduce exchanges when this "window" is full. It should be less than total pbup_pool_size
-#undef TCP_WND
-#define TCP_WND                         MEM_SIZE
-
-// must be less than 256 
-// TCP_SND_QUEUELEN == 8 says that at maximum, 8 pbufs will be queued for sending per TCP pcb
-#undef TCP_SND_QUEUELEN
-#define TCP_SND_QUEUELEN                16
-
-// MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
-#undef MEMP_SANITY_CHECK
-#define MEMP_SANITY_CHECK               0
-
-#undef MEMP_OVERFLOW_CHECK
-#define MEMP_OVERFLOW_CHECK             0
 
 #undef MEM_SANITY_CHECK
 #define MEM_SANITY_CHECK                0
@@ -139,35 +40,64 @@
 #undef MEM_OVERFLOW_CHECK
 #define MEM_OVERFLOW_CHECK              0
 
-/* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
-   sends a lot of data out of ROM (or other static memory), this
-   should be set high (>1024). */
-#undef MEMP_NUM_PBUF
-#define MEMP_NUM_PBUF                   16 
+#undef MEM_USE_POOLS
+#define MEM_USE_POOLS                   0
 
-/* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
-   connections. */
-#undef MEMP_NUM_TCP_PCB
-#define MEMP_NUM_TCP_PCB                8
+#undef MEM_USE_POOLS_TRY_BIGGER_POOL
+#define MEM_USE_POOLS_TRY_BIGGER_POOL   0
 
-#undef MEMP_NUM_TCP_PCB_LISTEN
-#define MEMP_NUM_TCP_PCB_LISTEN         2 
+#undef MEMP_USE_CUSTOM_POOLS
+#define MEMP_USE_CUSTOM_POOLS           0
 
-#undef MEMP_NUM_UDP_PCB
-#define MEMP_NUM_UDP_PCB                2
 
-/* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
-   segments. (2 * TCP_SND_QUEUELEN) */
-#undef MEMP_NUM_TCP_SEG
-#define MEMP_NUM_TCP_SEG                (TCP_SND_QUEUELEN * 2)
+// MEM_SIZE: the size of the heap memory. This is a statically allocated block.
+#undef MEM_SIZE
+#define MEM_SIZE                        (30*1024)
 
-// PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
-#undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  (TCP_SND_QUEUELEN * 4) 
+#undef MEM_ALIGNMENT
+#define MEM_ALIGNMENT                   4
 
-// **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
-#undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(2048)
+/* ---------- tcp options ---------- */
+#undef TCP_MSS                         
+#define TCP_MSS                         1460
+
+/**
+ * TCP_OVERSIZE: The maximum number of bytes that tcp_write may
+ * allocate ahead of time in an attempt to create shorter pbuf chains
+ * for transmission. The meaningful range is 0 to TCP_MSS. Some
+ * suggested values are:
+ *
+ * 0:         Disable oversized allocation. Each tcp_write() allocates a new
+              pbuf (old behaviour).
+ * 1:         Allocate size-aligned pbufs with minimal excess. Use this if your
+ *            scatter-gather DMA requires aligned fragments.
+ * 128:       Limit the pbuf/memory overhead to 20%.
+ * TCP_MSS:   Try to create unfragmented TCP packets.
+ * TCP_MSS/4: Try to create 4 fragments or less per TCP packet.
+ */
+#undef TCP_OVERSIZE
+#define TCP_OVERSIZE                    TCP_MSS 
+
+// should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
+#undef TCP_SND_BUF
+#define TCP_SND_BUF                     (24 * 1024)
+
+// TCP_WND have to be at least a couple of segments. It should be less than total pbup_pool_size
+#undef TCP_WND
+#define TCP_WND                         TCP_SND_BUF
+
+#undef LWIP_WND_SCALE
+#define LWIP_WND_SCALE                  0
+
+#undef TCP_RCV_SCALE
+#define TCP_RCV_SCALE                   0
+
+// must be less than 256 
+#undef TCP_SND_QUEUELEN
+#define TCP_SND_QUEUELEN                12
+
+#undef LWIP_DISABLE_TCP_SANITY_CHECKS
+#define LWIP_DISABLE_TCP_SANITY_CHECKS  1
 
 // do not send out of order packets
 #undef TCP_QUEUE_OOSEQ
@@ -176,29 +106,117 @@
 #undef LWIP_TCP_SACK_OUT
 #define LWIP_TCP_SACK_OUT               0
 
+/* ---------- udp options ---------- */
+#undef LWIP_UDPLITE
+#define LWIP_UDPLITE                    0
+
+/* ---------- memp options ---------- */
+// determines whether malloc memory is dynamically or statically allocated 
+// (0 = static memory)
+#undef MEMP_MEM_MALLOC
+#define MEMP_MEM_MALLOC		            	1
+
+#undef MEMP_SANITY_CHECK
+#define MEMP_SANITY_CHECK               0 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
+
+#undef MEMP_OVERFLOW_CHECK
+#define MEMP_OVERFLOW_CHECK             0
+
+/* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
+   sends a lot of data out of ROM (or other static memory), this
+   should be set high (>1024). */
+#undef MEMP_NUM_PBUF
+#define MEMP_NUM_PBUF                   6 
+
+/* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
+   connections. */
+#undef MEMP_NUM_TCP_PCB
+#define MEMP_NUM_TCP_PCB                4
+
+#undef MEMP_NUM_TCP_PCB_LISTEN
+#define MEMP_NUM_TCP_PCB_LISTEN         2 
+
+#undef MEMP_NUM_UDP_PCB
+#define MEMP_NUM_UDP_PCB                6
+
+#undef MEMP_NUM_RAW_PCB
+#define MEMP_NUM_RAW_PCB                6
+
+/* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
+   segments. (2 * TCP_SND_QUEUELEN) */
+#undef MEMP_NUM_TCP_SEG
+#define MEMP_NUM_TCP_SEG                (TCP_SND_QUEUELEN * 2)
+
+/* ---------- pbuf options ---------- */
+// PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
+#undef PBUF_POOL_SIZE
+#define PBUF_POOL_SIZE                  20
+
+// **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
+#undef PBUF_POOL_BUFSIZE
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(1536)
+
+/* ---------- netif options ---------- */
+#undef LWIP_NETIF_TX_SINGLE_PBUF
+#define LWIP_NETIF_TX_SINGLE_PBUF       1
+
+/* ---------- ip options ---------- */
+#undef IP_REASS_MAX_PBUFS
+#define IP_REASS_MAX_PBUFS              6
+
+#undef MEMP_NUM_REASSDATA
+#define MEMP_NUM_REASSDATA              IP_REASS_MAX_PBUFS
+
+#undef IP_FRAG
+#define IP_FRAG                         1
+
+/* ---------- arp options ---------- */
+#undef ARP_QUEUEING
+#define ARP_QUEUEING                    1
+
+#undef ARP_QUEUE_LEN
+#define ARP_QUEUE_LEN                   2
+
+#undef MEMP_NUM_ARP_QUEUE
+#define MEMP_NUM_ARP_QUEUE              6
+
+/* ---------- napt options ---------- */
+// Memory usage at 512: Heap from 30136 to 17632: 12504
+// Memory usage at 128: Heap from 30136 to 26848: 3288
+#undef IP_NAPT
+#define IP_NAPT                         1
+
+#undef IP_NAPT_MAX
+#define IP_NAPT_MAX                     128
+
+#undef IP_NAPT_PORTMAP
+#define IP_NAPT_PORTMAP                 0
+
+#undef IP_PORTMAP_MAX
+#define IP_PORTMAP_MAX                  10
 
 /* ---------- Checksum options ---------- */
 #define LWIP_CHECKSUM_CTRL_PER_NETIF      1
 #define LWIP_CHECKSUM_ON_COPY             1
-#define TCP_CHECKSUM_ON_COPY_SANITY_CHECK 1
-#define LWIP_CHKSUM_ALGORITHM             3 // 2
+#define TCP_CHECKSUM_ON_COPY_SANITY_CHECK 0
+#define LWIP_CHKSUM_ALGORITHM             3
 
 #define CHECKSUM_GEN_IP                   1
-#define CHECKSUM_GEN_UDP                  1
+#define CHECKSUM_GEN_UDP                  0
 #define CHECKSUM_GEN_TCP                  1
 #define CHECKSUM_GEN_ICMP                 1
 #define CHECKSUM_GEN_ICMP6                1
 
 #define CHECKSUM_CHECK_IP                 1
-#define CHECKSUM_CHECK_UDP                1
+#define CHECKSUM_CHECK_UDP                0
 #define CHECKSUM_CHECK_TCP                1
 #define CHECKSUM_CHECK_ICMP               1
 #define CHECKSUM_CHECK_ICMP6              1
 
 /* ---------- Statistics options ---------- */
 
-#define LWIP_STATS              1
-#define LWIP_STATS_DISPLAY      1
+#define LWIP_STATS              0
+#define LWIP_STATS_DISPLAY      0
 
 #if LWIP_STATS
 #define LINK_STATS              0
@@ -207,10 +225,10 @@
 #define IGMP_STATS              0
 #define IPFRAG_STATS            0
 #define UDP_STATS               0
-#define TCP_STATS               1
-#define MEM_STATS               0
+#define TCP_STATS               0
+#define MEM_STATS               1
 #define MEMP_STATS              1
-#define PBUF_STATS              1
+#define PBUF_STATS              0
 #define SYS_STATS               0
 #define IP_NAPT_STATS           1
 #endif /* LWIP_STATS */
