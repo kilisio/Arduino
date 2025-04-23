@@ -24,7 +24,6 @@ If first build go to root of project and initialize required submodules
 Build lwip2
 ```sh
     rm -rf ./builder/
-    make install
     make clean
     ./patch.sh
     make install

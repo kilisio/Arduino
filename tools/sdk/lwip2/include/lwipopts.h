@@ -32,7 +32,7 @@
 
 /* ---------- memory options ---------- */
 #undef MEM_LIBC_MALLOC
-#define MEM_LIBC_MALLOC                 0
+#define MEM_LIBC_MALLOC                 1
 
 #undef MEM_SANITY_CHECK
 #define MEM_SANITY_CHECK                0
@@ -41,18 +41,18 @@
 #define MEM_OVERFLOW_CHECK              0
 
 #undef MEM_USE_POOLS
-#define MEM_USE_POOLS                   1
+#define MEM_USE_POOLS                   0
 
 #undef MEM_USE_POOLS_TRY_BIGGER_POOL
 #define MEM_USE_POOLS_TRY_BIGGER_POOL   0
 
 #undef MEMP_USE_CUSTOM_POOLS
-#define MEMP_USE_CUSTOM_POOLS           1
+#define MEMP_USE_CUSTOM_POOLS           0
 
 
 // MEM_SIZE: the size of the heap memory. This is a statically allocated block.
 #undef MEM_SIZE
-#define MEM_SIZE                        0
+#define MEM_SIZE                        (24 * 1024)
 
 #undef MEM_ALIGNMENT
 #define MEM_ALIGNMENT                   4
@@ -78,9 +78,12 @@
 #undef TCP_OVERSIZE
 #define TCP_OVERSIZE                    TCP_MSS 
 
+#undef TCP_WND_UPDATE_THRESHOLD
+#define TCP_WND_UPDATE_THRESHOLD        TCP_MSS 
+
 // should be big enough to accept multiple packet buffers and not be blocked when there are multiple tcp writes.
 #undef TCP_SND_BUF
-#define TCP_SND_BUF                     (22 * 1024)
+#define TCP_SND_BUF                     (18 * 1024)
 
 // TCP_WND have to be at least a couple of segments. It should be less than total pbup_pool_size
 #undef TCP_WND
@@ -101,10 +104,13 @@
 
 // do not send out of order packets
 #undef TCP_QUEUE_OOSEQ
-#define TCP_QUEUE_OOSEQ                 0
+#define TCP_QUEUE_OOSEQ                 1
 
 #undef LWIP_TCP_SACK_OUT
-#define LWIP_TCP_SACK_OUT               0
+#define LWIP_TCP_SACK_OUT               1
+
+#undef TCP_OOSEQ_MAX_PBUFS
+#define TCP_OOSEQ_MAX_PBUFS             2
 
 /* ---------- udp options ---------- */
 #undef LWIP_UDPLITE
@@ -114,7 +120,7 @@
 // determines whether malloc memory is dynamically or statically allocated 
 // (0 = static memory)
 #undef MEMP_MEM_MALLOC
-#define MEMP_MEM_MALLOC		            	0
+#define MEMP_MEM_MALLOC		            	1
 
 #undef MEMP_SANITY_CHECK
 #define MEMP_SANITY_CHECK               0 // MEMP_SANITY_CHECK=0 stabilizes time between two sent packets hence increasing overall throughput
@@ -150,11 +156,11 @@
 /* ---------- pbuf options ---------- */
 // PBUF_POOL_SIZE is the total number of available pbufs. total pool zize equals (PBUF_POOL_SIZE * PBUF_POOL_BUFSIZE) bytes
 #undef PBUF_POOL_SIZE
-#define PBUF_POOL_SIZE                  0
+#define PBUF_POOL_SIZE                  16
 
 // **packet buffers are approximately MTU size (1500) and therefore smaller packet buffers are just wasted.The code joins together smaller buffers to fit an mtu sized buffer i.e (3 x 500 byte = 1500). Therefore having a 500 byte bufsize gives better performance for smaller packets because each has its own buffer.
 #undef PBUF_POOL_BUFSIZE
-#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(1600)
+#define PBUF_POOL_BUFSIZE               LWIP_MEM_ALIGN_SIZE(1536)
 
 /* ---------- netif options ---------- */
 #undef LWIP_NETIF_TX_SINGLE_PBUF
@@ -162,7 +168,7 @@
 
 /* ---------- ip options ---------- */
 #undef IP_REASS_MAX_PBUFS
-#define IP_REASS_MAX_PBUFS              6
+#define IP_REASS_MAX_PBUFS              2
 
 #undef MEMP_NUM_REASSDATA
 #define MEMP_NUM_REASSDATA              IP_REASS_MAX_PBUFS
@@ -187,7 +193,7 @@
 #define IP_NAPT                         1
 
 #undef IP_NAPT_MAX
-#define IP_NAPT_MAX                     128
+#define IP_NAPT_MAX                     256
 
 #undef IP_NAPT_PORTMAP
 #define IP_NAPT_PORTMAP                 0
@@ -1476,7 +1482,7 @@ void dhcp_free_vendor_class_identifier(void);
  * TCP_SYNMAXRTX: Maximum number of retransmissions of SYN segments.
  */
 #if !defined TCP_SYNMAXRTX || defined __DOXYGEN__
-#define TCP_SYNMAXRTX                   6
+#define TCP_SYNMAXRTX                   12
 #endif
 
 /**
